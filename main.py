@@ -41,6 +41,8 @@ def str_split(line):
     line = line.strip()
     # 分割字符串
     parts = re.split(r':\t|\t|,|<|>|\(|\)|:|\s+', line)
+    # ==================
+    # return
 
     # 移除空字符串
     filtered_parts = [part.strip() for part in parts if part.strip()]
