@@ -47,8 +47,8 @@ def str_split(line):
 
     # 移除空字符串
     filtered_parts = [part.strip() for part in parts if part.strip()]
-
     return filtered_parts
+    # return filtered_parts
 
 '''
 RISC_V_Instruction类
