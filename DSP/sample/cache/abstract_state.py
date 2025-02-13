@@ -1,7 +1,7 @@
 import warnings
 from copy import deepcopy
 from typing import Set, Union, Dict, List, Optional
-
+import numpy as np
 from tabulate import tabulate
 
 from sample.cache.cache_config import CacheConfig
@@ -16,15 +16,6 @@ ScopeAwareAnalysisContext 表示了这样一个内容的类型抽象。 例如�
 """
 
 SetAbsState = Dict[Union[int, MemoryBlockWithScopeIdent], Union[int, ScopeAwareAnalysisContext]]
-"""
-Abstract Set State 的类型抽象。
-
-* 在进行 Must/May/Persistent-sim 时，Abstract Set State的类型为： Dict[int, int]。
-  其中第一个 int 表示内存访问块的 identity，即 ``tag``；第二个 int 表示 relative age。
-* 在进行 Scope-aware-sim 时，Abstract Set State的类型为： Dict[MemoryBlockWithScopeIdent, ScopeAwareAnalysisContext]。
-"""
-
-
 class SetState:
     """
     Abstract Set State.
