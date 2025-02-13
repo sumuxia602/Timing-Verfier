@@ -40,6 +40,7 @@ def convert_to_hex_if_possible(part):
 # 分离字符串
 def str_split(line):
     line = line.split('#')[0]
+    # line = line.strip()
     line = line.strip()
     # 分割字符串
     parts = re.split(r':\t|\t|,|<|>|\(|\)|:|\s+', line)
