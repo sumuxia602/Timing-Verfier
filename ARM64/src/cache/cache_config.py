@@ -1,4 +1,3 @@
-
 from math import log2
 from typing import Optional, Tuple, Dict
 from src.cache.constants import CacheHierarchy

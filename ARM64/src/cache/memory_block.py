@@ -1,4 +1,4 @@
-from typing import Sequence, Tuple
+from typing import Sequence, Tuple, Optional
 
 from src.cache.cache_config import CacheConfig
 from src.cache.constants import CacheHierarchy
@@ -39,12 +39,16 @@ class MemoryBlock:
         self.__cache_level = cache_level
         self.__hashed = (tag, set_index).__hash__()
         self.__dump = "[MemoryBlock, tag={}, set_index={}]".format(hex(self.__tag), self.__set_index)
+        self.ref_type: Optional[CacheHierarchy] = None
 
     def convert(self, cache_config: CacheConfig):
         if self.__cache_level == cache_config.cache_level:
             return self
         else:
             pass
+
+    def set_refType(self, L1_type: CacheHierarchy):
+        self.ref_type = L1_type
 
     @property
     def set_index(self):
@@ -161,9 +165,8 @@ class MemoryBlockWithScope(MemoryBlock):
 
 
 def MemblockConvert(ori_mb: MemoryBlock, ori_cache_config: CacheConfig, tar_cache_config: CacheConfig):
-    " 默认cache line size相同"
+    """ 默认cache line size相同 """
     cache_address = ori_mb.tag << ori_cache_config.set_bitlen | ori_mb.set_index
-
     return MemoryBlock(tag=cache_address >> tar_cache_config.set_bitlen,
                        set_index=cache_address & ((1 << tar_cache_config.set_bitlen) - 1),
                        cache_level=tar_cache_config.cache_level)
@@ -210,4 +213,3 @@ def memory_block_overlap(blck1: MemoryBlockWithScope, blck2: MemoryBlockWithScop
             continue  # 当前这一层发生了overlap。继续检查下一个循环的scope。
         return False  # 只要有一层不发生overlap，那么最终两个内存块就不会发生overlap。
     return True  # 如果检查到最后一层仍然发生overlap，那么最终两个内存块就发生overlap。
-

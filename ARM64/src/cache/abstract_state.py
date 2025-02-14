@@ -263,7 +263,6 @@ class CacheState:
                     other_age = other_set_state.get(ident, 0)
                     new_set_state[ident] = self_age if self_age > other_age else other_age
                 new_cachestate[set_index] = new_set_state
-        printf("...") //TODO 
         return new_state
 
     def __radd__(self, other):

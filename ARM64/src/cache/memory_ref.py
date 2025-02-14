@@ -41,4 +41,3 @@ class Reference:
 
     def __hash__(self) -> int:
         return self.__cache_address.__hash__()
-
