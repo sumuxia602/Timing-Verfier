@@ -35,6 +35,7 @@ if __name__ == "__main__":
     tb_config = read_config(args.tbpath, gen_procedure_cfg=args.gen_procedure_cfg, skip_user_plt=args.skip_user_plt)
     logger = Logger(verbose=args.verbose)
 
+    
     # 调用TCFG的早期分析方法
     # end2end_run(
     #     config=tb_config,
