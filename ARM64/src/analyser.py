@@ -571,4 +571,3 @@ class CacheAnalyser:
 
         with open(output_dir, 'w') as file:
             json.dump(output_format, file, indent=1)
-
