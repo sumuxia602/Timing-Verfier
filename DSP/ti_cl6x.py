@@ -91,7 +91,7 @@ def cl_dis6x(src: str, dump_file: bool = True, dump_dwarf=True) -> List[str]:
     out_path = compile_and_link(src)
     args = [
         "-d",  # do not display DATA section
-        out_path,
+        out_path,  # output path
         "-L",
     ]
     if dump_file:
