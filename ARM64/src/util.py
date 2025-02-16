@@ -87,6 +87,16 @@ class Logger:
         print(f"[{timestamp}] {msg}")
 
     def log2C(self, msg, msg2, verbose: int, color, color2, msg3="."):
+        """
+        打印带有颜色和时间戳的日志消息。
+
+        :param msg: 第一部分消息。
+        :param msg2: 第二部分消息。
+        :param verbose: 当前消息的详细级别。
+        :param color: 第一部分消息的颜色。
+        :param color2: 第二部分消息的颜色。
+        :param msg3: 第三部分消息（默认为"."）。
+        """
         if verbose < self.verbose:
             # Skip all messages that are filtered by verbose option.
             return
