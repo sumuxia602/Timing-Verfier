@@ -532,7 +532,8 @@ def main(file_path):
     #总运行时间
     total_duration = time.time() - start_time
 
-
+def unit_test(input):
+    pass 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process an input assembly file to create and draw a CFG.")
