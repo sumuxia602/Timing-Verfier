@@ -1,3 +1,7 @@
+# ---------------------------------File Info-------------------------------------------
+# 			"** @file:               run_benchmark_cli.py",
+# 			"** @author:             mengxia",
+# 			"** @version:            V0.0",
 import os
 import warnings
 import argparse
