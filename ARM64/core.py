@@ -80,9 +80,8 @@ def end2end_run(config: TestbenchConfig, logger: Logger):
     regular_loops = related_loops - irregular_loops
 
     # ================================================ L3 Cache Config Init ===============================================================
-
+    
     logger.log("Cache Config Init.", verbose=1, color='blue')
-
     # inst_cache_config = CacheConfig(CacheHierarchy.L1I, capacity_size=65536, associativity=1, line_size=64)  # 64KB
     # data_cache_config = CacheConfig(CacheHierarchy.L1D, capacity_size=65536, associativity=2, line_size=64)  # 64KB
     # unified_cache_config = CacheConfig(CacheHierarchy.L2, capacity_size=524288, associativity=4, line_size=64)  # 512KB
@@ -94,6 +93,7 @@ def end2end_run(config: TestbenchConfig, logger: Logger):
     #                                                  })
 
     # ================================================ L2 Cache Config Init ===============================================================
+    
     inst_cache_config = CacheConfig(CacheHierarchy.L1I, capacity_size=65536, associativity=1, line_size=64)  # 64KB
     data_cache_config = CacheConfig(CacheHierarchy.L1D, capacity_size=65536, associativity=2, line_size=64)  # 64KB
     unified_cache_config = CacheConfig(CacheHierarchy.L2, capacity_size=524288, associativity=4, line_size=64)  # 512KB
@@ -101,16 +101,16 @@ def end2end_run(config: TestbenchConfig, logger: Logger):
                                                      CacheHierarchy.L1D: data_cache_config,
                                                      CacheHierarchy.L2: unified_cache_config
                                                      })
-
+    
     # ======================================================= Cache Refs ====================================================================
+    
     logger.log("Find addr.", verbose=1, color='blue')
     addr_finder = Addr_Finder(proc_network, seg_reader, output_path, node_name2obj, ins_name2obj)
 
     logger.log("Collecting Cache Refs Information.", verbose=1, color='blue')
-
+    
     proc_inst_ref = dict()
     proc_data_ref = dict()
-
     for proc_cfg in related_procs:  # 以每个proc为一个CFG进行抽象解释及分析。
         inst_ref = dict()
         data_ref = dict()
@@ -119,14 +119,12 @@ def end2end_run(config: TestbenchConfig, logger: Logger):
             if isinstance(node, InterProcNode):
                 inst_ref[node.name] = None
                 data_ref[node.name] = None
-
             " 其他节点 "
             for inst in node.instructions:
                 if inst_ref.get(node.name, None) is None:
                     inst_ref[node.name] = dict()
                 ref = Reference(inst.addr.val() >> 6, RefType.INST, multilevel_cache_config)
                 inst_ref[node.name][inst] = ref
-
             for ins, ref_addr_val_set in node.data_reference.items():
                 if data_ref.get(node.name, None) is None:
                     data_ref[node.name] = dict()
