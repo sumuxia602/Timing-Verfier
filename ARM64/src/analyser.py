@@ -3,6 +3,7 @@ from collections import defaultdict
 from typing import List, Dict, Hashable, Optional, Set
 import json
 import datetime
+from toolset.memory_usage import *
 
 from src.cache.abstract_state import MultiLevelCacheState
 from src.cache.memory_block import MemoryBlock
@@ -15,51 +16,6 @@ from src.isa import Instruction
 
 INST_CHMC = Tuple[CacheHierarchy, CHMC]
 DATA_CHMC = Tuple[CacheHierarchy, CHMC]
-
-
-def read_json_file(file_path):
-    with open(file_path, 'r') as f:
-        data = json.load(f)
-
-    # 将target_range和execution_intervals中的地址转换为十六进制
-    target_range = (
-        int(data['target_range']['start_address'], 16),
-        int(data['target_range']['end_address'], 16)
-    )
-
-    execution_intervals = [
-        {
-            'start_address': int(interval['start_address'], 16),
-            'end_address': int(interval['end_address'], 16),
-            'execution_count': interval['execution_count']
-        }
-        for interval in data['execution_intervals']
-    ]
-
-    return target_range, execution_intervals
-
-
-def calculate_instruction_execution(target_range, execution_intervals):
-    # 初始化一个字典存储每条指令的执行次数
-    instruction_execution_counts = {}
-
-    # 遍历目标指令地址范围
-    for address in range(target_range[0], target_range[1] + 1):
-        # 初始化每条指令的执行次数为0
-        instruction_execution_counts[address] = 0
-
-        # 遍历每个执行区间
-        for interval in execution_intervals:
-            interval_start = interval['start_address']
-            interval_end = interval['end_address']
-            execution_count = interval['execution_count']
-
-            # 如果当前指令在当前区间范围内
-            if interval_start <= address <= interval_end:
-                # 将该区间的执行次数加到指令的执行次数中
-                instruction_execution_counts[address] += execution_count
-
-    return instruction_execution_counts
 
 
 class CacheAnalyser:
