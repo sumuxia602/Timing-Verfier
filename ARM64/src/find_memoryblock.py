@@ -16,7 +16,7 @@ class MemoryBlock:
 
     @property
     def memory_block_val(self):
-        """返回对接 cache analysis 的内存号,可能处理的还有问题"""
+        """返回对接cache analysis的内存号,可能处理的还有问题"""
         # bin_str = bin(self.__memory_addr)[2:]
         # bin_int = int(bin_str, 2)
         # shifted_binary_int = bin_int >> 6
