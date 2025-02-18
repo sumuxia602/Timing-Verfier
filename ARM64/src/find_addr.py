@@ -112,19 +112,44 @@ class Reg_Tracker:
 
 
 class Addr_Finder:
-    def __init__(self, proc_net, seg_reader, output_path):
+    def __init__(self, proc_net, seg_reader, output_path, node_name2obj, ins_name2obj):
         self.__proc_net = proc_net
         self.__re_num = re.compile(r"(((?:#[1-9]\d*)|(?:#0x[0-9a-fA-F]*)|(?:[1-9]\d*)|(?:0x[0-9a-fA-F]*)))")
         self.__seg_reader = seg_reader
         self.__output_path = output_path
+        self.node_name2obj = node_name2obj
+        self.ins_name2obj = ins_name2obj
 
         self.find_global_ins_mb()
-        self.find_global_data_mb()
+        self.mp_find_mb()
+        # for proc in self.__proc_net.procedures:
+        #     self.find_global_data_mb(proc)
+
+    def mp_find_mb(self):
+        mppQueue = MPManager().Queue()
+        mpPool = MPPool()
+        proc_num = 0
+        for proc in self.__proc_net.procedures:
+            mpPool.apply_async(self.find_global_data_mb, args=(proc, mppQueue))
+        mpPool.close()  # 关闭pool使其不接受新的线程
+        mpPool.join()  # 等所有的进程执行完毕
+
+        temp_list = []
+        while not mppQueue.empty():
+            temp = mppQueue.get()
+            temp_list.append(temp)
+        for temp in temp_list:
+            reg_tracker = temp[0]
+            node = temp[1]
+            real_node = self.node_name2obj[node.name]
+            read_ins = self.ins_name2obj[reg_tracker.ins.addr.val()]
+
+            self.tracker2mb(self.__seg_reader, reg_tracker, real_node, read_ins)
 
     def find_global_ins_mb(self):
-        """找ins addr"""
+        '''找ins addr'''
 
-        def find_node_addr(node):
+        def find_ins_node_addr(node):
             for ins in node.instructions:
                 ins_addr_val = ins.addr.val()
                 mb = Reg_Addr(ins, ins_addr_val)
@@ -133,12 +158,11 @@ class Addr_Finder:
 
         for proc in self.__proc_net.procedures:
             for node in proc.nodes:
-                find_node_addr(node)
+                find_ins_node_addr(node)
 
-    def find_global_data_mb(self):
-        """ 找load/store 寄存器对应的addr """
-
-        def find_node_addr(node):
+    def find_global_data_mb(self, proc, mppQueue):
+        """找load/store 寄存器对应的addr"""
+        for node in proc.nodes:
             for ins in node.instructions:
                 if ins.is_ls:
                     reg_str_list = list()
@@ -154,11 +178,8 @@ class Addr_Finder:
                                 is_sp = True
                     reg_tracker = Reg_Tracker(reg_str_list, ins.ls_addr_offset, ins, is_sp)
                     self.find_ins_data_mb(node, ins, reg_tracker)
-                    self.tracker2mb(self.__seg_reader, reg_tracker, node)
-
-        for proc in self.__proc_net.procedures:
-            for node in proc.nodes:
-                find_node_addr(node)
+                    mppQueue.put((reg_tracker, node))
+                    # self.tracker2mb(self.__seg_reader, reg_tracker, node)
 
     def find_ins_data_mb(self, node, target_ins, reg_tracker):
         """这部分主要是确定了需要符号执行的指令之后用来遍历用的"""
@@ -232,9 +253,11 @@ class Addr_Finder:
         elif trace_ins.inst_type == InstructionType.Adrp:
             '''除了概率极小的mov,adrp似乎是我们找全局变量唯一的办法'''
             if reg_tracker.is_in_reg_list(trace_ins.adrp_first_opperand):
+
                 base = trace_ins.adrp_addr
                 reg_tracker.set_base(base)
                 reg_tracker.find_reg(trace_ins.adrp_first_opperand)
+                reg_tracker.set_range()
 
     def addrStr2val(self, addrStr):
         if isinstance(addrStr, int):
@@ -255,8 +278,8 @@ class Addr_Finder:
 
         return offset
 
-    def tracker2mb(self, seg_reader, reg_tracker, node):
-        ins = reg_tracker.ins
+    def tracker2mb(self, seg_reader, reg_tracker, node, read_ins):
+        ins = read_ins
 
         base_addr = reg_tracker.base_addr
         addr_offset = reg_tracker.offset
@@ -276,14 +299,15 @@ class Addr_Finder:
                 addr_lowerer = i[2]
                 addr_upper = i[3]
                 if addr >= addr_lowerer and addr < addr_upper:
-
                     if find_range:
+                        # print(addr_lowerer)
                         j = addr_lowerer
                         while j < addr_upper:
                             mb = Reg_Addr(ins, j)
                             node.add_data_mbs(mb)
                             node.add_data_reference(ins, mb.memory_block_val)
                             is_add = True
+                            j += 4
                     else:
                         mb = Reg_Addr(ins, addr_lowerer)
                         node.add_data_mbs(mb)
@@ -298,12 +322,14 @@ class Addr_Finder:
                 addr_upper = i[3]
                 if addr >= addr_lowerer and addr < addr_upper:
                     if find_range:
+                        # print(addr_lowerer)
                         j = addr_lowerer
                         while j < addr_upper:
                             mb = Reg_Addr(ins, j)
                             node.add_data_mbs(mb)
                             node.add_data_reference(ins, mb.memory_block_val)
                             is_add = True
+                            j += 4
                     else:
                         mb = Reg_Addr(ins, addr_lowerer)
                         node.add_data_mbs(mb)
@@ -315,9 +341,8 @@ class Addr_Finder:
                 mb = Reg_Addr(ins, 0)
                 node.add_data_mbs(mb)
                 node.add_data_reference(ins, 0)
-
         else:
             mb = Reg_Addr(ins, 0)
             node.add_data_mbs(mb)
             node.add_data_reference(ins, 0)
-            pass
+            
