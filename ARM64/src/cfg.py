@@ -29,7 +29,9 @@ class Procedure:
         self.edges = list()
 
         self.entry_state: Optional[MultiLevelCacheState] = None
+        self.entry_state_nc: Optional[List[MultiLevelCacheState]] = None
         self.dummyNodes_state: Optional[Dict[Hashable, MultiLevelCacheState]] = None
+        self.dummyNodes_state_nc: Optional[Dict[Hashable, List[MultiLevelCacheState]]] = None
 
     def set_as_plt(self):
         warnings.warn(f"This procedure is considered as a plt-procedure. Procedure name: {self.__name}")
@@ -56,7 +58,10 @@ class Procedure:
 
     def add_proc_segmentation(self, all_nodes):
         self.nodes = all_nodes
-        self.entry_node = self.nodes[0]
+        if self.nodes == []:
+            pass
+        else:
+            self.entry_node = self.nodes[0]
 
     def draw_inner_cfg(self, filename='inner_procedure_cfg.gv', fmt='svg'):
         g = Digraph('Call Graph', filename=filename, format=fmt)
@@ -230,7 +235,7 @@ class InnerProcNode:
         self.__data_reference = dict()
 
         # 概率化NC需要用到的部分
-        self.probability = 1  # 默认概率是100%
+        self.probability = 0
 
     @property
     def name(self):
@@ -323,7 +328,7 @@ class InnerProcEdge:
         self.is_back_edge = False
 
         # 概率化NC需要用到的部分
-        self.probability = 1  # 默认概率是100%
+        self.probability = 0
 
     @property
     def src(self):
@@ -362,6 +367,7 @@ class InnerProcCFG:
         self.__procedures = proc_net.procedures
         self.__name2proc = proc_net.mapping_name2instance
         self.__loops: List[InnerProcLoop] = list()
+        self.__related_procs = set()
 
         for proc in self.__procedures:
             seg_before_addr, seg_after_addr = self.__proc_segmentation_position(proc)
@@ -435,7 +441,10 @@ class InnerProcCFG:
             nodes = [node for node in proc.nodes if node.instructions[-1].name == 'ret']
             if len(nodes) == 0:
                 warnings.warn(f"{proc.name} is not a Plt-procedure and do not have 'ret' instruction.")
-                nodes = [proc.nodes[-1]]
+                if len(proc.nodes) == 0:
+                    nodes = 0
+                else:
+                    nodes = [proc.nodes[-1]]
             proc.exit_nodes = nodes
             return nodes
 
@@ -712,7 +721,7 @@ class InnerProcCFG:
     def loops(self):
         return self.__loops
 
-    def procs_sort(self) -> Set[Procedure]:
+    def find_related_procs(self) -> set[Procedure]:
         """ 找出从main函数开始所有相关的函数 """
         procs = self.__procedures
 
@@ -722,25 +731,52 @@ class InnerProcCFG:
             raise ValueError("main函数没有找到")
 
         # 使用DFS查找所有与main函数有调用关系的函数
-        related_procs = set()  # 与 main函数相关的所有相关的函数集合
+        self.__related_procs = set()  # 与 main函数相关的所有相关的函数集合
         stack = [main_proc]
         while stack:
             current_proc = stack.pop()
-            if current_proc not in related_procs:
-                related_procs.add(current_proc)
+            if current_proc not in self.__related_procs:
+                self.__related_procs.add(current_proc)
                 for outgoing in current_proc.outgoing_proc:
-                    if outgoing not in related_procs:
+                    if outgoing not in self.__related_procs:
                         stack.append(outgoing)
-        return related_procs
+        return self.__related_procs
 
-    def topological_sort(self) -> Set[InnerProcLoop]:
+    def find_related_loops(self) -> Set[InnerProcLoop]:
         # 使用字典来记录每个节点的入度
         sorted_loops = set()
-        related_procs = self.procs_sort()
+        related_procs = self.find_related_procs()
         for loop in self.loops:
             if loop.proc in related_procs:
                 sorted_loops.add(loop)
         return sorted_loops
+
+    # def node_probability(self):
+    #     procs = self.__procs
+    #     def compute_node_probabilitu(proc):
+    #         node_list = list()
+
+    #         proc.entry_node.probability = 1
+    #         for edge in proc.entry_node.outgoing_edge:
+    #             edge.probability = 1/(len(proc.entry_node.outgoing_edge))
+    #             node_list.append(edge.dst)
+
+    #         while True:
+    #             if len(node_list) == 0:
+    #                 break
+    #             for node in node_list:
+    #                 temp_prob = 0 
+    #                 for edge in node.incoming_edge:
+    #                     temp_prob += edge.probability
+    #                     if edge.probability == 0:
+    #                         break
+    #                     elif edge.is_back_edge:
+    #                         pass
+    #                     node.prob = temp_prob
+    #                     node_list
+
+    # for proc in procs:
+    #     compute_node_probabilitu(proc)
 
 
 class IrregularLoopFound(RuntimeError):
