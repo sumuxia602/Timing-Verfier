@@ -79,24 +79,32 @@ def end2end_run(config: TestbenchConfig, logger: Logger):
             irregular_loops.add(loop)
     regular_loops = related_loops - irregular_loops
 
-    # =========================================== Cache Config Init ===============================================================
+    # ================================================ L3 Cache Config Init ===============================================================
 
     logger.log("Cache Config Init.", verbose=1, color='blue')
-    # inst_cache_config = CacheConfig(CacheHierarchy.L1I, capacity_size=65536, associativity=1, line_size=64)
-    # data_cache_config = CacheConfig(CacheHierarchy.L1D, capacity_size=65536, associativity=2, line_size=64)
-    # unified_cache_config = CacheConfig(CacheHierarchy.L2, capacity_size=524288, associativity=4, line_size=64)
 
-    inst_cache_config = CacheConfig(CacheHierarchy.L1I, capacity_size=2048, associativity=1, line_size=64)
-    data_cache_config = CacheConfig(CacheHierarchy.L1D, capacity_size=2048, associativity=2, line_size=64)
-    unified_cache_config = CacheConfig(CacheHierarchy.L2, capacity_size=16384, associativity=4, line_size=64)
+    # inst_cache_config = CacheConfig(CacheHierarchy.L1I, capacity_size=65536, associativity=1, line_size=64)  # 64KB
+    # data_cache_config = CacheConfig(CacheHierarchy.L1D, capacity_size=65536, associativity=2, line_size=64)  # 64KB
+    # unified_cache_config = CacheConfig(CacheHierarchy.L2, capacity_size=524288, associativity=4, line_size=64)  # 512KB
+    # LL_cache_config = CacheConfig(CacheHierarchy.L3, capacity_size=67108864, associativity=16, line_size=64)  # 64M
+    # multilevel_cache_config = MultiLevelCacheConfig({CacheHierarchy.L1I: inst_cache_config,
+    #                                                  CacheHierarchy.L1D: data_cache_config,
+    #                                                  CacheHierarchy.L2: unified_cache_config,
+    #                                                  CacheHierarchy.L3: LL_cache_config
+    #                                                  })
 
+    # ================================================ L2 Cache Config Init ===============================================================
+    inst_cache_config = CacheConfig(CacheHierarchy.L1I, capacity_size=65536, associativity=1, line_size=64)  # 64KB
+    data_cache_config = CacheConfig(CacheHierarchy.L1D, capacity_size=65536, associativity=2, line_size=64)  # 64KB
+    unified_cache_config = CacheConfig(CacheHierarchy.L2, capacity_size=524288, associativity=4, line_size=64)  # 512KB
     multilevel_cache_config = MultiLevelCacheConfig({CacheHierarchy.L1I: inst_cache_config,
                                                      CacheHierarchy.L1D: data_cache_config,
-                                                     CacheHierarchy.L2: unified_cache_config})
+                                                     CacheHierarchy.L2: unified_cache_config
+                                                     })
 
-    # ================================================== Cache Refs ================================================================
+    # ======================================================= Cache Refs ====================================================================
     logger.log("Find addr.", verbose=1, color='blue')
-    addr_finder = Addr_Finder(proc_network, seg_reader, output_path)
+    addr_finder = Addr_Finder(proc_network, seg_reader, output_path, node_name2obj, ins_name2obj)
 
     logger.log("Collecting Cache Refs Information.", verbose=1, color='blue')
 
@@ -104,15 +112,14 @@ def end2end_run(config: TestbenchConfig, logger: Logger):
     proc_data_ref = dict()
 
     for proc_cfg in related_procs:  # 以每个proc为一个CFG进行抽象解释及分析。
-
         inst_ref = dict()
         data_ref = dict()
-
         for node in proc_cfg.nodes:
             " 虚拟节点 "
             if isinstance(node, InterProcNode):
                 inst_ref[node.name] = None
                 data_ref[node.name] = None
+
             " 其他节点 "
             for inst in node.instructions:
                 if inst_ref.get(node.name, None) is None:
@@ -135,18 +142,19 @@ def end2end_run(config: TestbenchConfig, logger: Logger):
 
     logger.log("Analysis Cache Behavior", verbose=1, color='blue')
     cache_analyser = CacheAnalyser(cfg, multilevel_cache_config, proc_inst_ref, proc_data_ref, related_procs,
-                                   sorted_loops)
+                                   regular_loops, debug_path, debug=True)
     cache_analyser.do_analysis()
     cache_analyser.persistent_analysis()
-    # ==================================================== Categorize+Statistical ==================================================================
+
+    # ==================================================== Categorize ==================================================================
 
     cache_analyser.Categorize()
-    # cache_analyser.Statistical(config.target_range, config.execution_intervals)
+
+    # ===================================================== Statistical ================================================================
+
     analysis_output_path = os.path.join(output_path, 'cache-analysis')
     cache_analyser.output_chmc(analysis_output_path)
+    if config.target_range is not None and config.execution_intervals is not None:
+        cache_analyser.Statistical(config.target_range, config.execution_intervals, analysis_output_path)
     logger.log("Finished.", verbose=1, color='green')
-
-    # ============================================================  =====================================================================
-
-
 
