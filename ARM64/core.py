@@ -1,15 +1,15 @@
 import os
-import json
+import shutil
 from typing import Set, Union, Dict, List, Optional, Hashable
 from src.util import TestbenchConfig, Logger
 from src.read_asm import AsmFileReader
 from src.read_segment import SegmentReader
 from src.cfg import *
+from src.find_addr import Addr_Finder
 from src.cache.cache_config import CacheConfig, MultiLevelCacheConfig
 from src.cache.constants import *
 from src.analyser import CacheAnalyser
 from src.cache.memory_ref import Reference
-from src.find_addr import Addr_Finder
 
 def end2end_run(config: TestbenchConfig, logger: Logger):
     logger.log("Starting hw cache analysis v2.", verbose=1, color='blue')
