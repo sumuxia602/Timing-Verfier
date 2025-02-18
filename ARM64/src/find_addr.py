@@ -2,6 +2,7 @@ from src.cfg import *
 from src.isa_base import InstructionType
 from src.read_segment import SegmentReader
 import re
+from multiprocessing import Pool as MPPool, Manager as MPManager
 
 
 class Reg_Addr:
