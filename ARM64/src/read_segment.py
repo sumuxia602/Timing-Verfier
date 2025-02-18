@@ -1,6 +1,5 @@
 import re
 
-
 class SegmentReader:
 
     def __init__(self, fpath) -> None:
@@ -50,3 +49,4 @@ class SegmentReader:
             rlt[-1].append(tmp + 4)
 
         return rlt
+        
