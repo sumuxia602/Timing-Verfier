@@ -27,12 +27,14 @@ def read_config(tbf, **kwargs):
         data = json.load(f)
 
     instruction_data_path = os.path.join(tbf, 'instruction_data.json')
+    # 检查文件是否存在
     if not os.path.exists(instruction_data_path):
         target_range = None
         execution_intervals = None
     else:
         with open(instruction_data_path, 'r') as f:
             instruction_data = json.load(f)
+        # 将target_range和execution_intervals中的地址转换为十六进制
         target_range = (
             int(instruction_data['target_range']['start_address'], 16),
             int(instruction_data['target_range']['end_address'], 16)
@@ -59,7 +61,14 @@ def read_config(tbf, **kwargs):
     # config.skip_user_plt = True
     config.gen_procedure_cfg = kwargs.get('gen_procedure_cfg', False)
     config.skip_user_plt = kwargs.get('skip_user_plt', False)
+
     return config
+
+
+# 在参数重加上**kwargs
+# kwargs.get() 方法用于从 kwargs 字典中获取指定键的值。它接受一个参数，即要获取的键，并返回对应的值。如果字典中不存在该键，则返回 None。
+# 例如，在上面的代码中，我们使用 kwargs.get('name') 来获取名字，使用 kwargs.get('age') 来获取年龄。如果调用函数时未提供这些关键字参数，则会返回 None。
+# 你还可以给 get() 方法提供第二个参数，用于指定当找不到指定键时返回的默认值。
 
 
 class Logger:
@@ -87,16 +96,6 @@ class Logger:
         print(f"[{timestamp}] {msg}")
 
     def log2C(self, msg, msg2, verbose: int, color, color2, msg3="."):
-        """
-        打印带有颜色和时间戳的日志消息。
-
-        :param msg: 第一部分消息。
-        :param msg2: 第二部分消息。
-        :param verbose: 当前消息的详细级别。
-        :param color: 第一部分消息的颜色。
-        :param color2: 第二部分消息的颜色。
-        :param msg3: 第三部分消息（默认为"."）。
-        """
         if verbose < self.verbose:
             # Skip all messages that are filtered by verbose option.
             return
