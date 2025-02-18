@@ -148,3 +148,4 @@ class MultiLevelCacheConfig:
 
     def __getitem__(self, cache_level: CacheHierarchy) -> CacheConfig:
         return self.__cache_levels[cache_level]
+
