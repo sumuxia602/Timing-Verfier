@@ -381,8 +381,13 @@ class CacheAnalyser:
             for node, refs in self.__proc_inst_ref[proc].items():
                 if refs:
                     for inst, ref in refs.items():
+                        # chmc = [self.categorize_inst(proc, node, ref, CacheHierarchy.L1I),
+                        #         self.categorize_inst(proc, node, ref, CacheHierarchy.L2),
+                        #         self.categorize_inst(proc, node, ref, CacheHierarchy.L3)
+                        #         ]
                         chmc = [self.categorize_inst(proc, node, ref, CacheHierarchy.L1I),
-                                self.categorize_inst(proc, node, ref, CacheHierarchy.L2)]
+                                self.categorize_inst(proc, node, ref, CacheHierarchy.L2)
+                                ]
                         self.__proc_inst_chmc[proc][
                             inst.addr.hex_str()] = chmc  # cache_line addr: chmc (inst.addr.hex_str())
 
@@ -390,8 +395,13 @@ class CacheAnalyser:
                 if data_refs:
                     for inst, refs in data_refs.items():
                         if refs:
+                            # chmc = [self.categorize_data(proc, node, refs, CacheHierarchy.L1D),
+                            #         self.categorize_data(proc, node, refs, CacheHierarchy.L2),
+                            #         self.categorize_data(proc, node, refs, CacheHierarchy.L3)
+                            #         ]
                             chmc = [self.categorize_data(proc, node, refs, CacheHierarchy.L1D),
-                                    self.categorize_data(proc, node, refs, CacheHierarchy.L2)]
+                                    self.categorize_data(proc, node, refs, CacheHierarchy.L2)
+                                    ]
                             self.__proc_data_chmc[proc][inst.addr.hex_str()] = chmc
 
     # def Statistical(self, target_range: Tuple[int, int], execution_intervals: List[dict[str, int]]):
