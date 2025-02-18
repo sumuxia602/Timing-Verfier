@@ -1,10 +1,17 @@
+# -*- coding: utf-8 -*-
+"""
+@Time       : 2023/3/23 19:21
+@Author     : Juxin Niu (juxin.niu@outlook.com)
+@FileName   : read_asm.py
+@Description: 
+"""
 import os.path
 import re
 from enum import Enum, auto
 from typing import List
 
-
 class StatementType(Enum):
+
     Instruction = auto()
     SubProcedure = auto()
     Other = auto()
@@ -29,7 +36,7 @@ class AsmFileReader:
 
         with open(self.__fpath, 'rt', encoding='utf-8') as fp:
             self.__statements = [s.strip() for s in fp.readlines() if len(s.strip()) != 0]
-
+        
         for s in self.__statements:
             is_instruction = re.match(self.re_inst, s)
             is_subproc = re.match(self.re_subproc, s)
@@ -41,6 +48,7 @@ class AsmFileReader:
             else:
                 self.__parsed_statements.append((StatementType.Other, ""))
 
+
     @property
     def fpath(self):
         return self.__fpath
@@ -48,7 +56,7 @@ class AsmFileReader:
     @property
     def statements(self):
         return self.__statements
-
+    
     @property
     def parsed_statements(self):
         return self.__parsed_statements
