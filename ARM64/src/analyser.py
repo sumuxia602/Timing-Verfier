@@ -157,7 +157,7 @@ class CacheAnalyser:
     def do_analysis(self):
         # 对调用关系排序
         sorted_functions = self.kahn_topological_sort()
-        max_iterations = 100  # Set a limit to prevent infinite loops
+        max_iterations = 10  # Set a limit to prevent infinite loops
         iteration_count = 0
         fixed = False
         main_checked = 0
@@ -168,7 +168,12 @@ class CacheAnalyser:
             iteration_count += 1
             print("[" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "]", end=' ')
             print("iteration_count:", iteration_count)
-            name = "\n\niteration_count:" + str(iteration_count)
+
+            if self.__debug:
+                name = "\n\niteration_count: " + str(iteration_count)
+                with open(self.__debug_path + "/fixpoint_time.txt", 'a') as file:
+                    file.write(name + "\n")
+                memory_usage(self.__debug_path, name)
 
             for function in sorted_functions:
                 " 设置初始状态EntryState，main函数初始状态为空；其他函数的初始状态为caller nodes的out state的union。 "
@@ -207,9 +212,15 @@ class CacheAnalyser:
                     " 如果入口节点传入的状态fixed，则无需再迭代 "
                     function.entry_state = EntryState  # 保留函数入口节点的State，后续迭代时需要继续使用
                     # 将 caller 调用节点的抽象状态传递给 callee 的入口节点，作为 callee 的初始状态。
+                    if self.__debug:
+                        name = function.name + "-before "
+                        memory_usage(self.__debug_path, name)
                     self.__proc_fixpoint[function].do_analysis(self.__proc_access_order[function],
-                                                               function.entry_state,
-                                                               function.dummyNodes_state)
+                                                               EntryState=function.entry_state,
+                                                               DummyNodes_State=function.dummyNodes_state)
+                    if self.__debug:
+                        name = function.name + "-after "
+                        memory_usage(self.__debug_path, name)
 
             for function in sorted_functions:
                 " 将 callee 的出口状态递回 caller 函数调用后的节点，并对其进行更新。"
@@ -243,9 +254,15 @@ class CacheAnalyser:
                     fixed = False
                     function.dummyNodes_state = DummyNodes_State
                     # 将 callee 的出口状态传递回 caller 函数调用之后的节点。
+                    if self.__debug:
+                        name = function.name + "-before "
+                        memory_usage(self.__debug_path, name)
                     self.__proc_fixpoint[function].do_analysis(self.__proc_access_order[function],
-                                                               function.entry_state,
-                                                               function.dummyNodes_state)
+                                                               EntryState=function.entry_state,
+                                                               DummyNodes_State=function.dummyNodes_state)
+                    if self.__debug:
+                        name = function.name + "-after "
+                        memory_usage(self.__debug_path, name)
 
     def persistent_analysis(self):
         for function in self.__related_procs:
@@ -258,12 +275,21 @@ class CacheAnalyser:
             # 遍历 loops，进行不动点迭代
             if loops:
                 for loop in loops:
-                    self.__loop_fixpoint[loop].do_analysis(self.__proc_access_order[function], EntryState=None,
+                    if self.__debug:
+                        name = function.name + loop.name + "-before "
+                        memory_usage(self.__debug_path, name)
+
+                    self.__loop_fixpoint[loop].do_analysis(self.__proc_access_order[function],
+                                                           EntryState=None,
                                                            DummyNodes_State=function.dummyNodes_state)
+                    if self.__debug:
+                        name = function.name + loop.name + "-after "
+                        memory_usage(self.__debug_path, name)
+
                     self.__proc_Per_states[function].append(self.__loop_fixpoint[loop].state_map)
 
             " 判断 incoming_proc -> function 所代表的虚拟节点是否在loop中 "
-            in_procs = function.incoming_proc  #
+            in_procs = function.incoming_proc
             inOtherProcLoop = False  # 该函数是否被嵌套在其他函数的loop
             for p in in_procs:
                 for node in p.nodes:
@@ -279,23 +305,28 @@ class CacheAnalyser:
                 in_cache(ref.get_block(cache_hierarchy))):
             return cache_hierarchy, CHMC.AH
 
-        elif ref.get_block(cache_hierarchy) in self.__proc_PS_blocks[proc][node][cache_hierarchy]:
+        elif cache_hierarchy != CacheHierarchy.L3 and ref.get_block(cache_hierarchy) in \
+                self.__proc_PS_blocks[proc][node][cache_hierarchy]:  # L3没有PS分析
             return cache_hierarchy, CHMC.PS
 
         elif not (
-                self.__proc_fixpoint[proc].state_map[node].in_state.get_state(CacheAnalysisMethod.MAY, cache_hierarchy).
-                        in_cache(ref.get_block(cache_hierarchy))):
+        self.__proc_fixpoint[proc].state_map[node].in_state.get_state(CacheAnalysisMethod.MAY, cache_hierarchy).
+                in_cache(ref.get_block(cache_hierarchy))):
             return cache_hierarchy, CHMC.AM
-
         else:
             may_count = 0
             must_count = 0
             base_count = len(self.__proc_fixpoint[proc].state_map[node].nc_in_state_list)
-            for state in self.__proc_fixpoint[proc].state_map[node].nc_in_state_list:
-                if state.get_state(CacheAnalysisMethod.MAY, cache_hierarchy).in_cache(ref.get_block(cache_hierarchy)):
-                    may_count += 1
-                if state.get_state(CacheAnalysisMethod.MUST, cache_hierarchy).in_cache(ref.get_block(cache_hierarchy)):
-                    must_count += 1
+            if base_count == 0:
+                nc_proc = 0.0  # 默认值（或者根据需求设定）
+            else:
+                for state in self.__proc_fixpoint[proc].state_map[node].nc_in_state_list:
+                    if state.get_state(CacheAnalysisMethod.MAY, cache_hierarchy).in_cache(
+                            ref.get_block(cache_hierarchy)):
+                        may_count += 1
+                    if state.get_state(CacheAnalysisMethod.MUST, cache_hierarchy).in_cache(
+                            ref.get_block(cache_hierarchy)):
+                        must_count += 1
                 nc_proc = self.nc_proc_cal(must_count, may_count, base_count)
             return cache_hierarchy, nc_proc
 
@@ -306,8 +337,9 @@ class CacheAnalyser:
                for ref in refs):
             return cache_hierarchy, CHMC.AH
 
-        elif all(ref.get_block(cache_hierarchy) in self.__proc_PS_blocks[proc][node][cache_hierarchy]
-                 for ref in refs):
+        elif cache_hierarchy != CacheHierarchy.L3 and all(
+                ref.get_block(cache_hierarchy) in self.__proc_PS_blocks[proc][node][cache_hierarchy]
+                for ref in refs):  # L3没有PS分析
             return cache_hierarchy, CHMC.PS
 
         elif all(not self.__proc_fixpoint[proc].state_map[node].in_state.
@@ -320,14 +352,17 @@ class CacheAnalyser:
             may_count = 0
             must_count = 0
             base_count = len(self.__proc_fixpoint[proc].state_map[node].nc_in_state_list)
-            for state in self.__proc_fixpoint[proc].state_map[node].nc_in_state_list:
-                for ref in refs:
-                    if state.get_state(CacheAnalysisMethod.MAY, cache_hierarchy).in_cache(
-                            ref.get_block(cache_hierarchy)):
-                        may_count += 1
-                    if state.get_state(CacheAnalysisMethod.MUST, cache_hierarchy).in_cache(
-                            ref.get_block(cache_hierarchy)):
-                        must_count += 1
+            if base_count == 0:
+                nc_proc = 0.0  # 默认值（或者根据需求设定）
+            else:
+                for state in self.__proc_fixpoint[proc].state_map[node].nc_in_state_list:
+                    for ref in refs:
+                        if state.get_state(CacheAnalysisMethod.MAY, cache_hierarchy).in_cache(
+                                ref.get_block(cache_hierarchy)):
+                            may_count += 1
+                        if state.get_state(CacheAnalysisMethod.MUST, cache_hierarchy).in_cache(
+                                ref.get_block(cache_hierarchy)):
+                            must_count += 1
                 nc_proc = self.nc_proc_cal(must_count, may_count, base_count)
             return cache_hierarchy, nc_proc
 
@@ -339,8 +374,8 @@ class CacheAnalyser:
             must_proc = 0.6
         if may_proc + must_proc >= 1:
             return 0.933
-        return (may_proc + must_proc)
-
+        return may_proc + must_proc
+        
     def Categorize(self):
         for proc in self.__related_procs:
             for node, refs in self.__proc_inst_ref[proc].items():
