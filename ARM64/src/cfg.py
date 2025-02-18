@@ -6,7 +6,6 @@ from enum import Enum, auto
 from typing import Dict, List, Optional, Sequence, Set, Tuple, Hashable
 from graphviz import Digraph
 from tabulate import tabulate
-
 from src.cache.abstract_state import MultiLevelCacheState
 from src.isa import Address, Instruction
 from src.read_asm import AsmFileReader, StatementType
@@ -79,15 +78,11 @@ class ProcedureNetwork:
         self.__skip_as_plt = skip_as_plt
         self.__procedures = self.__proc_identify(statements)
         self.__proc_name2instance: Dict[str, Procedure] = {proc.name: proc for proc in self.__procedures}
-
         for skip_procedure_name in self.__skip_as_plt:
             if skip_procedure_name in self.__proc_name2instance:
                 self.__proc_name2instance[skip_procedure_name].set_as_plt()
-
         self.__proc_draw_edges()
-        # if (possible_cycle := self.__find_cycle()) is not None:
-        #     c = [p.name for p in possible_cycle]
-        #     raise RuntimeError("Loop between procedures is not allowed: {}.".format(c))
+
 
     @staticmethod
     def __parser_from_asm_reader(asm_reader: AsmFileReader):
