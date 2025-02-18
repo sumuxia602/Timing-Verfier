@@ -18,12 +18,21 @@ def end2end_run(config: TestbenchConfig, logger: Logger):
     logger.log2C(f"Generate Procedure CFG: ", f"{config.gen_procedure_cfg}", verbose=1, color='green', color2='red')
     benchmark_name = config.benchmark_name
     output_path = os.path.join('output', benchmark_name)
-
     if os.path.exists(output_path):
         pass
     else:
         os.mkdir(output_path)
-
+    # ======================================================== Debug Config =====================================================
+ 
+    debug_path = os.path.join('debug', benchmark_name)
+    
+    # 如果debug_path已存在，先删除
+    if os.path.exists(debug_path):
+        shutil.rmtree(debug_path)
+        
+    # 创建debug_path目录
+    os.makedirs(debug_path, exist_ok=True)
+    
     logger.log("Read asm file and build instructions...", verbose=1, color='blue')
     reader = AsmFileReader(config.asm_path)
     seg_reader = SegmentReader(config.asm_d_path)
@@ -53,14 +62,22 @@ def end2end_run(config: TestbenchConfig, logger: Logger):
     else:
         logger.log("Skip Procedure CFG.", verbose=1, color='red')
 
-    related_procs = cfg.procs_sort()  # 拓扑排序找到 Relate_Procs
-    sorted_loops = cfg.topological_sort()  # 拓扑排序 Loop
+    node_name2obj = {}
+    ins_name2obj = {}
+    for proc in procedures:
+        for node in proc.nodes:
+            node_name2obj[node.name] = node
+            for ins in node.instructions:
+                ins_name2obj[ins.addr.val()] = ins
+
+    related_procs = cfg.find_related_procs()  # 拓扑排序找到 Relate_Procs
+    related_loops = cfg.find_related_loops()  # 拓扑排序 Loop
 
     irregular_loops = set()
-    for loop in sorted_loops:
+    for loop in related_loops:
         if loop.name is None:
             irregular_loops.add(loop)
-    sorted_loops = sorted_loops - irregular_loops
+    regular_loops = related_loops - irregular_loops
 
     # =========================================== Cache Config Init ===============================================================
 
