@@ -1,4 +1,3 @@
-import copy
 import warnings
 from copy import deepcopy
 from typing import Set, Union, Dict, List, Optional
@@ -36,10 +35,12 @@ class CacheState:
         self.__states = [dict() for _ in range(cache_config.set_number)]
         self.__associativity = cache_config.associativity
         self.__cache_level = cache_config.cache_level
+        self.__PO: Set[MemoryBlock] = set()
 
     def clear(self):
         """ Clears the state of the cache. This method resets all the states in the cache to an empty dictionary. """
         self.__states = [dict() for _ in range(self.__cache_config.set_number)]
+        self.__PO = set()
 
     @property
     def cache_config(self) -> CacheConfig:
@@ -64,6 +65,25 @@ class CacheState:
         return tuple([state.__hash__() for state in self.__states])
         # return tuple([state.runtime_ident.__hash__() for state in self.__states])
 
+    @property
+    def PO(self) -> set[MemoryBlock]:
+        return self.__PO
+
+    def add_PO(self, mbs: Set[MemoryBlock]):
+        self.__PO = mbs
+
+    def reset_PO(self):
+        self.__PO = set()
+
+    def get_last_block(self, set_index: int) -> Set[MemoryBlock]:
+        last_block = set()
+        for tag, age in self.__states[set_index].items():
+            if age == self.associativity:
+                tag_block = int(tag)
+                mb = MemoryBlock(tag_block, set_index, self.__cache_level)
+                last_block.add(mb)
+        return last_block
+
     def get_evicted_line(self) -> Set[MemoryBlock]:
         if not self.analysis_type == CacheAnalysisMethod.PERSISTENT:
             raise TypeError("Only PERSISTENT analysis is supported")
@@ -80,7 +100,7 @@ class CacheState:
         return True if mb in in_cache_blocks else False
 
     def remove_block(self, mb: MemoryBlock):
-        self.__states[mb.set_index][mb.tag].pop(mb)
+        self.__states[mb.set_index].pop(mb.tag)
 
     def set_age(self, age, mb: MemoryBlock):
         """ 暂时只用于PERSISTENT中 """
@@ -100,8 +120,9 @@ class CacheState:
         for mem_block, rel_age in self.__states[set_index].items():
             if rel_age >= cmp_rel_age:
                 continue
-            """ 内存块的年龄最大不会超过 SetState.associativity+1，当等于时，说明该内存块被驱逐。 """
+            """ 内存块的年龄最大不会超过 SetState.associativity + 1，当等于时，说明该内存块被驱逐。 """
             self.__states[set_index][mem_block] = min(self.__associativity, rel_age) + 1
+
         if remove_evicted:
             self.__remove_evicted(set_index)
 
@@ -127,7 +148,7 @@ class CacheState:
             if rel_age > self.__associativity:
                 self.__states[set_index].pop(mem_block)
 
-    def update(self, mem_block: MemoryBlock, loop_level: int = -1, min_age: Optional[int] = None):
+    def updateL1(self, mem_block: MemoryBlock, min_age: Optional[int] = None):
         if not isinstance(mem_block, MemoryBlock):
             raise TypeError("mem_block must be instances of class:MemoryBlock instead of ", type(mem_block))
         if min_age is not None and not self.analysis_type == CacheAnalysisMethod.MAY:
@@ -135,6 +156,7 @@ class CacheState:
 
         set_index = mem_block.set_index
         block_ident = mem_block.tag
+
         if self.__analysis_type == CacheAnalysisMethod.MUST:
             """ Must-sim:
             To determine if a memory block is definitely in the __cache we use abstract __cache states where the positions
@@ -148,6 +170,7 @@ class CacheState:
             rel_age = self.__states[set_index].get(block_ident, self.associativity + 1)
             self.__add_relative_age_less(mem_block.set_index, rel_age, remove_evicted=True)
             self.__states[set_index][block_ident] = 1
+
         elif self.__analysis_type == CacheAnalysisMethod.MAY:
             """ May-sim:
             To determine, if a memory block is never in the __cache, we compute the set of all memory blocks that may be
@@ -186,32 +209,96 @@ class CacheState:
             self.__add_relative_age_less(mem_block.set_index, rel_age, remove_evicted=False)
             self.__states[set_index][block_ident] = 1
 
+    def updateL2(self, mem_block: MemoryBlock):
+        if not isinstance(mem_block, MemoryBlock):
+            raise TypeError("mem_block must be instances of class:MemoryBlock instead of ", type(mem_block))
+        set_index = mem_block.set_index
+        block_ident = mem_block.tag
+        if self.__analysis_type == CacheAnalysisMethod.MUST:
+            """ 如果内存块 m 不在 Set State 中，那么将年龄设置为 SetState.associativity + 1，这样所有的内存块年龄都小于m """
+            self.reset_PO()
+            last_blocks = self.get_last_block(set_index)
+            last_blocks.discard(mem_block)
+            rel_age = self.__states[set_index].get(block_ident, self.associativity + 1)
+            if last_blocks != set() and rel_age > self.associativity:
+                self.add_PO(last_blocks)
+            self.__add_relative_age_less(mem_block.set_index, rel_age, remove_evicted=True)
+            self.__states[set_index][block_ident] = 1
+
+        elif self.__analysis_type == CacheAnalysisMethod.MAY:
+            """ 如果内存块m不在 Set State 中，那么将年龄设置为 SetState.associativity + 1，这样所有的内存块年龄都小于等于m """
+            self.reset_PO()
+            rel_age = self.__states[set_index].get(block_ident, self.__associativity + 1)
+            last_blocks = self.get_last_block(set_index)
+            last_blocks.discard(mem_block)
+            if last_blocks != set() and rel_age >= self.associativity:  # 只有L2需要获取驱逐块，min_age为空
+                self.add_PO(last_blocks)
+            self.__add_relative_age_leq(mem_block.set_index, rel_age, remove_evicted=True)
+            self.__states[set_index][block_ident] = 1
+
+        elif self.__analysis_type == CacheAnalysisMethod.PERSISTENT:
+            rel_age = self.__states[set_index].get(block_ident, self.__associativity + 1)
+            self.__add_relative_age_less(mem_block.set_index, rel_age, remove_evicted=False)
+            self.__states[set_index][block_ident] = 1
+
     def updateU(self, mem_block: MemoryBlock, loop_level: int = -1, min_age: Optional[List[int]] = None):
         """
-        CAC = U时的 Update：
-        即 updateU = Join(cache state, Update(cache state, memory block))
+        指来CAC = U时的Update 即 updateU = Join(cache state, Update(cache state, memory block))
         主要是为了避免 deepcopy 的开销
         """
         set_index = mem_block.set_index
         block_ident = mem_block.tag
         if self.__analysis_type == CacheAnalysisMethod.MUST:
-            # L1 MISS，继而访问L2(更新Block) & L2 Hit，不访问L2(L2中一定含有L1的block)
-            # 最差的情况就是更新block
+            # L1 MISS，继而访问L2(更新Block) & L1 Hit，不访问L2(L2中一定含有L1的block)
+            # CAC=N， L1_MUST一定没有内存块，L2中可能有，也可能没有
+            self.reset_PO()
+            last_blocks = self.get_last_block(set_index)
+            last_blocks.discard(mem_block)
             rel_age = self.__states[set_index].get(block_ident, self.__associativity + 1)
             self.__add_relative_age_less(set_index, rel_age, remove_evicted=True)
-            self.__states[set_index][block_ident] = 1
+            if rel_age > self.__associativity:  # must_state没有此内存块，更新(L1 AM)
+                if last_blocks != set():
+                    self.add_PO(last_blocks)
+                self.__states[set_index][block_ident] = 1
+            else:  # must_state有此内存块，合并must状态(L1 AH)，此时便不操作。
+                pass
 
         elif self.__analysis_type == CacheAnalysisMethod.MAY:
+            # L1 MISS，继而访问L2(更新Block) | L1 Hit，不访问L2(L2中一定含有L1的block)
+            # CAC=N， L1_MAY一定有此内存块，所以L2中也一定有
+            self.reset_PO()
             self.__states[set_index][block_ident] = 1
 
         elif self.__analysis_type == CacheAnalysisMethod.PERSISTENT:
             rel_age = self.__states[set_index].get(block_ident, self.__associativity + 1)
             self.__add_relative_age_less(set_index, rel_age, remove_evicted=False)
-            if rel_age == self.__associativity + 1:  # 之前没有放过内存块Block，令其age=1
+            if rel_age == self.__associativity + 1:
                 self.__states[set_index][block_ident] = 1
-            for block_ident, rel_age in tuple(self.__states[set_index].items()):
-                if rel_age > self.associativity:
-                    self.__states[set_index][block_ident] = self.associativity
+            else:  # ps_state存在此内存块，合并ps状态(L1 Hit)，则保留并集(所以不存在驱逐集)和max age。
+                pass
+
+    def updateL3(self, mem_block: MemoryBlock) -> None:
+        """
+        将驱逐的块从L2插入到L3缓存，并实现LRU替换策略。
+
+        Args:
+            mem_block: 需要插入L3缓存的内存块地址。
+        """
+        if not isinstance(mem_block, MemoryBlock):
+            raise TypeError("mem_block must be instances of class:MemoryBlock instead of ", type(mem_block))
+
+        set_index = mem_block.set_index
+        block_ident = mem_block.tag
+
+        if self.__analysis_type == CacheAnalysisMethod.MUST:
+            rel_age = self.__states[set_index].get(block_ident, self.associativity + 1)
+            self.__add_relative_age_less(mem_block.set_index, rel_age, remove_evicted=True)
+            self.__states[set_index][block_ident] = 1
+
+        elif self.__analysis_type == CacheAnalysisMethod.MAY:
+            rel_age = self.__states[set_index].get(block_ident, self.__associativity + 1)
+            self.__add_relative_age_leq(mem_block.set_index, rel_age, remove_evicted=True)
+            self.__states[set_index][block_ident] = 1
 
     def __add__(self, other):
         """ 不同分析方法的Join函数 """
@@ -263,6 +350,7 @@ class CacheState:
                     other_age = other_set_state.get(ident, 0)
                     new_set_state[ident] = self_age if self_age > other_age else other_age
                 new_cachestate[set_index] = new_set_state
+
         return new_state
 
     def __radd__(self, other):
@@ -342,20 +430,20 @@ class CACLeastUpperBound:
 
 
 def UpdateCAC(chmc, cac):
-    """ From the CHMC and CAC of layer i,  get the CAC of layer i+1 : L1->L2 """
-    if cac == CAC.A:  # L1 (CAC==A) -> L2
+    """ From the CHMC and CAC of layer i,  get the CAC of layer i+1 """
+    if cac == CAC.A:
         if chmc == CHMC.AH:
-            cac = CAC.A    # L2中可能不存在此内存块
+            cac = CAC.N
         elif chmc == CHMC.AM:
             cac = CAC.A
-        else:  # L1.chmc == PS/NC
-            cac = CAC.U     # L2中可能不存在此内存块
-    elif cac == CAC.U:      # L2 -> L3
+        else:  # PS
+            cac = CAC.U
+    elif cac == CAC.U:
         if chmc == CHMC.AH:
             cac = CAC.N
         else:
             cac = CAC.U
-    else:              # L2 -> L3
+    else:
         cac = CAC.N
     return cac
 
@@ -418,28 +506,29 @@ class MultiLevelCacheState:
 
     def update(self, ref: Reference):
         """ 更新函数 """
-        L1Block = ref.get_block(CacheHierarchy.L1I if ref.ref_type == RefType.INST else CacheHierarchy.L1D)
+        L1_cache_level = CacheHierarchy.L1I if ref.ref_type == RefType.INST else CacheHierarchy.L1D
+        L1Block = ref.get_block(L1_cache_level)
         L2Block = ref.get_block(CacheHierarchy.L2)
 
         " First Loop: from L1 to lower cache level "
         cac = CAC.A
-        cache_level = CacheHierarchy.L1I if ref.ref_type == RefType.INST else CacheHierarchy.L1D
-        self.__CAC_bound.update(ref, cache_level, cac)  # 设置L1下的cac
+        cache_level = L1_cache_level
+        self.__CAC_bound.update(ref, cache_level, cac)
         chmc = self.Categorize(ref, cache_level)
-        cac = UpdateCAC(chmc, cac)  # 通过该cache level下的cac及指令的chmc，获取下一级的cac
+        cac = UpdateCAC(chmc, cac)
         " L2"
         cache_level = CacheHierarchy.L2
-        self.__CAC_bound.update(ref, cache_level, cac)  # 设置L2下的cac
-        chmc = self.Categorize(ref, cache_level)
-        cac = UpdateCAC(chmc, cac)  # 获取下一级的cac
+        self.__CAC_bound.update(ref, cache_level, cac)
+        # chmc = self.Categorize(ref, cache_level)
+        # cac = UpdateCAC(chmc, cac)
 
         " second Loop: from L2 to higher cache level "
         cac = self.__CAC_bound.get_CAC(ref, cache_level)
         if cac == CAC.A:
-            self.__states[CacheAnalysisMethod.MUST][cache_level].update(L2Block)
-            self.__states[CacheAnalysisMethod.MAY][cache_level].update(L2Block)
-            self.__states[CacheAnalysisMethod.PERSISTENT][cache_level].update(L2Block)
-        elif cac == CAC.U:  # L1中的指令为PS/NC
+            self.__states[CacheAnalysisMethod.MUST][cache_level].updateL2(L2Block)
+            self.__states[CacheAnalysisMethod.MAY][cache_level].updateL2(L2Block)
+            self.__states[CacheAnalysisMethod.PERSISTENT][cache_level].updateL2(L2Block)
+        elif cac == CAC.U:
             self.__states[CacheAnalysisMethod.MUST][cache_level].updateU(L2Block)
             self.__states[CacheAnalysisMethod.MAY][cache_level].updateU(L2Block)
             self.__states[CacheAnalysisMethod.PERSISTENT][cache_level].updateU(L2Block)
@@ -448,47 +537,77 @@ class MultiLevelCacheState:
 
         " Invalidate"
         # TODO optimize Invalidate function
-        PO = self.__states[CacheAnalysisMethod.PERSISTENT][cache_level].get_evicted_line()
+        PO_MUST = self.__states[CacheAnalysisMethod.MUST][cache_level].PO
+        PO_MAY = self.__states[CacheAnalysisMethod.MAY][cache_level].PO
+        PO_PS = self.__states[CacheAnalysisMethod.PERSISTENT][cache_level].get_evicted_line()
 
-        for victim in PO:
+        for victim in PO_MUST:
             victim_l1i = MemblockConvert(victim, self.__cache_config.get_cache_config(CacheHierarchy.L2),
                                          self.__cache_config.get_cache_config(CacheHierarchy.L1I))
             victim_l1d = MemblockConvert(victim, self.__cache_config.get_cache_config(CacheHierarchy.L2),
                                          self.__cache_config.get_cache_config(CacheHierarchy.L1D))
+            " remove m from θ_must′(i)(j) "
             if self.__states[CacheAnalysisMethod.MUST][CacheHierarchy.L1I].in_cache(victim_l1i):
                 self.__states[CacheAnalysisMethod.MUST][CacheHierarchy.L1I].remove_block(victim_l1i)
             if self.__states[CacheAnalysisMethod.MUST][CacheHierarchy.L1D].in_cache(victim_l1d):
                 self.__states[CacheAnalysisMethod.MUST][CacheHierarchy.L1D].remove_block(victim_l1d)
+
+        for victim in PO_MAY:
+            victim_l1i = MemblockConvert(victim, self.__cache_config.get_cache_config(CacheHierarchy.L2),
+                                         self.__cache_config.get_cache_config(CacheHierarchy.L1I))
+            victim_l1d = MemblockConvert(victim, self.__cache_config.get_cache_config(CacheHierarchy.L2),
+                                         self.__cache_config.get_cache_config(CacheHierarchy.L1D))
+            " if m ∈ θ_may′(i)(j) then if j < δ′(i) then δ′(i) = j "
+            if self.__states[CacheAnalysisMethod.MAY][CacheHierarchy.L1I].in_cache(victim_l1i):
+                self.__min_age[CacheHierarchy.L1I][victim.set_index] = min(self.__min_age[CacheHierarchy.L1I],
+                                                                           self.__states[CacheAnalysisMethod.MAY][
+                                                                               CacheHierarchy.L1I].get_age(
+                                                                               victim_l1i))
+            if self.__states[CacheAnalysisMethod.MAY][CacheHierarchy.L1D].in_cache(victim_l1d):
+                self.__min_age[CacheHierarchy.L1D][victim.set_index] = min(self.__min_age[CacheHierarchy.L1D],
+                                                                           self.__states[CacheAnalysisMethod.MAY][
+                                                                               CacheHierarchy.L1D].get_age(
+                                                                               victim_l1d))
+
+        for victim in PO_PS:
+            victim_l1i = MemblockConvert(victim, self.__cache_config.get_cache_config(CacheHierarchy.L2),
+                                         self.__cache_config.get_cache_config(CacheHierarchy.L1I))
+            victim_l1d = MemblockConvert(victim, self.__cache_config.get_cache_config(CacheHierarchy.L2),
+                                         self.__cache_config.get_cache_config(CacheHierarchy.L1D))
+            " remove m from θ_pers′(i)(j) and put it into θ_pers′(i)(T) "
             if self.__states[CacheAnalysisMethod.PERSISTENT][CacheHierarchy.L1I].in_cache(victim_l1i):
                 self.__states[CacheAnalysisMethod.PERSISTENT][CacheHierarchy.L1I].set_age(
                     self.__cache_config[CacheHierarchy.L1I].associativity + 1, victim_l1i)
-            if self.__states[CacheAnalysisMethod.PERSISTENT][CacheHierarchy.L1I].in_cache(victim):
+            if self.__states[CacheAnalysisMethod.PERSISTENT][CacheHierarchy.L1D].in_cache(victim_l1d):
                 self.__states[CacheAnalysisMethod.PERSISTENT][CacheHierarchy.L1D].set_age(
                     self.__cache_config[CacheHierarchy.L1D].associativity + 1, victim_l1d)
-            if self.__states[CacheAnalysisMethod.MAY][CacheHierarchy.L1I].in_cache(victim):
-                self.__min_age[CacheHierarchy.L1I][victim.set_index] = min(self.__min_age[CacheHierarchy.L1I],
-                                                                           self.__states[CacheAnalysisMethod.MAY][
-                                                                               CacheHierarchy.L1I].get_age(victim_l1i))
-            if self.__states[CacheAnalysisMethod.MAY][CacheHierarchy.L1D].in_cache(victim):
-                self.__min_age[CacheHierarchy.L1D][victim.set_index] = min(self.__min_age[CacheHierarchy.L1D],
-                                                                           self.__states[CacheAnalysisMethod.MAY][
-                                                                               CacheHierarchy.L1D].get_age(victim_l1d))
 
-        cache_level = CacheHierarchy.L1I if ref.ref_type == RefType.INST else CacheHierarchy.L1D
+        " L3 update"
+        # cache_level = CacheHierarchy.L3
+        # for mb_L2 in PO_MUST:
+        #     mb_L3 = MemblockConvert(mb_L2, self.__cache_config.get_cache_config(CacheHierarchy.L2),
+        #                                  self.__cache_config.get_cache_config(CacheHierarchy.L3))
+        #     self.__states[CacheAnalysisMethod.MUST][cache_level].updateL3(mb_L3)  # 将L2驱逐的内存块重定向到 L3 缓存
+        # for mb_L2 in PO_MAY:
+        #     mb_L3 = MemblockConvert(mb_L2, self.__cache_config.get_cache_config(CacheHierarchy.L2),
+        #                                  self.__cache_config.get_cache_config(CacheHierarchy.L3))
+        #     self.__states[CacheAnalysisMethod.MAY][cache_level].updateL3(mb_L3)  # 将L2驱逐的内存块重定向到 L3 缓存
+
+        " L1 update "
+        cache_level = L1_cache_level
         cac = self.__CAC_bound.get_CAC(ref, cache_level)
         if cac == CAC.A:
-            self.__states[CacheAnalysisMethod.MUST][cache_level].update(L1Block)
-            self.__states[CacheAnalysisMethod.MAY][cache_level].update(L1Block, min_age=self.__min_age[cache_level][L1Block.set_index])
-            self.__states[CacheAnalysisMethod.PERSISTENT][cache_level].update(L1Block)
-        elif cac == CAC.U:
-            self.__states[CacheAnalysisMethod.MUST][cache_level].updateU(L1Block)
-            self.__states[CacheAnalysisMethod.MAY][cache_level].updateU(L1Block)
-            self.__states[CacheAnalysisMethod.PERSISTENT][cache_level].updateU(L1Block)
-        else:
+            self.__states[CacheAnalysisMethod.MUST][cache_level].updateL1(L1Block)
+            self.__states[CacheAnalysisMethod.MAY][cache_level].updateL1(L1Block, min_age=self.__min_age[cache_level][L1Block.set_index])
+            self.__states[CacheAnalysisMethod.PERSISTENT][cache_level].updateL1(L1Block)
+        # elif cac == CAC.U:  # 不可能情况
+        #     self.__states[CacheAnalysisMethod.MUST][cache_level].updateU(L1Block)
+        #     self.__states[CacheAnalysisMethod.MAY][cache_level].updateU(L1Block)
+        #     self.__states[CacheAnalysisMethod.PERSISTENT][cache_level].updateU(L1Block)
+        else:  # 不可能情况
             pass
 
     def Categorize(self, ref: Reference, cache_level: CacheHierarchy):
-
         mb = ref.get_block(cache_level)
         debug = True
 
@@ -498,9 +617,6 @@ class MultiLevelCacheState:
 
         if self.must_state[cache_level].in_cache(mb):
             return CHMC.AH
-
-        # if self.persistent_state[cache_level].in_cache(mb):  # 对全局进行persistent，导致AM的指令无法识别，影响计算CAC，删掉
-        #     return CHMC.PS
 
         if not self.may_state[cache_level].in_cache(mb):
             return CHMC.AM
@@ -514,6 +630,7 @@ class MultiLevelCacheState:
             for level in state.keys():
                 new_state.__states[analysis_type][level] = self.__states[analysis_type][level] + \
                                                            other.__states[analysis_type][level]
+
         return new_state
 
     def __radd__(self, other):
