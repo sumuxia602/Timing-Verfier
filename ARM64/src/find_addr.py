@@ -28,14 +28,10 @@ class Reg_Tracker:
         self.__is_find = False  # 是否找到
         self.__has_sp = is_sp  # 是否是局部变量（无法判断）
         self.__is_range = False  # 是否是数据访问（需要倒入多个地址）
-
         self.__back_trace_num = 0  # 用来限制回溯的node数量的，方式路径爆炸并且间接防止死循环
         self.__reg_list = orig_reg_list  # 需要找的reg的列表
-
         self.__offset = orig_offload
         self.__base = 0  # 这个和配合is_base找是否是数组
-
-        # 调试用用的
         self.tracker_list = list()
         self.ins = ins
 
@@ -91,7 +87,6 @@ class Reg_Tracker:
             self.__base = int(self.__base, 16)
         return self.__base
 
-    # 重点，reg的处理，也就是实际上负责符号执行的部分，这部分还需要更大的调整
     @property
     def reg_list(self):
         return self.__reg_list
@@ -119,7 +114,6 @@ class Addr_Finder:
         self.__output_path = output_path
         self.node_name2obj = node_name2obj
         self.ins_name2obj = ins_name2obj
-
         self.find_global_ins_mb()
         self.mp_find_mb()
         # for proc in self.__proc_net.procedures:
@@ -286,11 +280,8 @@ class Addr_Finder:
         addr = addr_offset + base_addr
         cur_node = node
         find_range = reg_tracker.is_range
-        # with open(self.output_path, 'a+', encoding='utf-8') as f:
-        #     f.write("here\n")
 
         if reg_tracker.is_find:
-
             is_add = False
             bss = seg_reader.get_bss()
             # if ins.addr.hex_str() == "4006c4":
