@@ -23,12 +23,16 @@ class CacheAnalyser:
                  proc_inst_ref: Dict[Procedure, Dict[Hashable, Dict[Instruction, Reference]]],
                  proc_data_ref: Dict[Procedure, Dict[Hashable, Dict[Instruction, Set[Reference]]]],
                  related_procs: Set[Procedure],
-                 regular_loops: Set[InnerProcLoop]) -> None:
+                 regular_loops: Set[InnerProcLoop],
+                 debug_path: str,
+                 debug: bool) -> None:
 
         self.__cache_config = cache_config
         self.__cfg = cfg
         self.__related_procs = related_procs
         self.__regular_loops: Set[InnerProcLoop] = regular_loops
+        self.__debug_path: str = debug_path
+        self.__debug: bool = debug
 
         self.__proc_access_order: Dict[Procedure, Dict[Hashable, List[Set[Reference]]]] = defaultdict(dict)
         self.__proc_inst_ref: Dict[Procedure, Dict[Hashable, Dict[Instruction, Reference]]] = proc_inst_ref
@@ -37,13 +41,13 @@ class CacheAnalyser:
         self.__proc_fixpoint: Dict[Procedure, Fixpoint] = defaultdict()
         for proc in self.__related_procs:
             self.gen_access_order(proc)  # 初始化 proc_access_order
-            self.__proc_fixpoint[proc] = Fixpoint(proc, self.__cache_config,
-                                                  loop=None)  # 初始化proc对应的fixpoint
+            self.__proc_fixpoint[proc] = Fixpoint(proc, self.__debug_path, self.__debug, self.__cache_config,
+                                                  loop=None)  # 初始化 proc 对应的 fixpoint
 
         self.__loop_fixpoint: Dict[InnerProcLoop, Fixpoint] = defaultdict()
         for loop in self.__regular_loops:
-            self.__loop_fixpoint[loop] = Fixpoint(loop.proc, self.__cache_config,
-                                                  loop=loop)  # 初始化proc对应的fixpoint
+            self.__loop_fixpoint[loop] = Fixpoint(loop.proc, self.__debug_path, self.__debug, self.__cache_config,
+                                                  loop=loop)  # 初始化 proc 对应的 fixpoint
 
         self.__proc_Per_states: Dict[Procedure, List[Dict[Hashable, FixpointState]]] = defaultdict(
             list)  # proc需要合并的state
@@ -55,7 +59,6 @@ class CacheAnalyser:
         self.__proc_inst_chmc: Dict[Procedure, Dict[Hashable, List[INST_CHMC]]] = defaultdict(dict)
         self.__proc_data_chmc: Dict[Procedure, Dict[Hashable, List[DATA_CHMC]]] = defaultdict(dict)
 
-    # ？？？
     def gen_access_order(self, function: Procedure):
         """ 生成在 proc 中每个节点的访问顺序, 根据该节点的指令引用信息构建一个访问序列，其中包括加载/存储指令的相关数据引用。"""
         for node, refs in self.__proc_inst_ref[function].items():
@@ -65,8 +68,9 @@ class CacheAnalyser:
                     if not node_access_order or ref not in node_access_order[-1]:
                         node_access_order.append({ref})
                     if inst.is_ls:
-                        dic = self.__proc_data_ref[function][node]
-                        node_access_order.append(dic[inst])  # dic[inst]：访存指令ls对应的数据
+                        if node in self.__proc_data_ref[function]:  # 存在问题
+                            dic = self.__proc_data_ref[function][node]
+                            node_access_order.append(dic[inst])
             self.__proc_access_order[function][node] = node_access_order
 
     @property
