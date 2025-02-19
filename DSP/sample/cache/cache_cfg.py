@@ -83,7 +83,6 @@ class CacheCFGLoop:
 
 
 class CacheCFG:
-
     def __init__(self, instructions: List[Instruction]):
         self.__entry_node_ident = None
         self.__node_pool: Dict[Hashable, CacheCFGNode] = dict()
@@ -172,8 +171,7 @@ class CacheCFG:
             )
 
     def read_from_front_end(self, prog: Prog, loop_hr: LoopHrchy):
-        """"""
-
+        """ """
         """ Nodes """
         for node in prog.tcfg_nodes:
             start_inst = 0
@@ -200,7 +198,7 @@ class CacheCFG:
                 if edge.edge_kind == TCFGEdgeKind.NEVER_TAKEN:
                     continue
                 self.__add_edge(edge.src.nid, edge.dst.nid)
-
+                
         """ Loops """
         for ident, loop in loop_hr.loops.items():
             # CacheCFG does not take whole-procedure-loop into consideration.
@@ -233,8 +231,7 @@ class CacheCFG:
             self.__node_loop_map[ident] = loop_list
 
     def __loop_topsort(self) -> List[Hashable]:
-        """"""
-
+        """ """
         in_loops: Dict[Hashable, Set[Hashable]] = {ident: set() for ident in self.__loop_pool}
         for ident, loop in self.__loop_pool.items():
             if loop.father_loop is not None:
@@ -261,7 +258,7 @@ class CacheCFG:
         return new_ident
 
     def __loop_unrolling_basic(self, loop_ident: Hashable, keep_tail_out_edges: bool = True):
-        """"""
+        """ """
         loop = self.__loop_pool[loop_ident]
         ident_mapping: Dict[Hashable, Hashable] = dict()
 
@@ -322,7 +319,7 @@ class CacheCFG:
                 target_loop.set_tail(new_head_ident)
 
     def loop_unrolling(self, keep_tail_out_edges: bool = True):
-        """"""
+        """ """
         """
         避免交叉循环：
           - 对于任意两个循环loop1和loop2，如果loop1包含在loop2中，那么loop1的所有结点都属于loop2。
@@ -338,8 +335,8 @@ class CacheCFG:
                                node_in_loop: bool = True,
                                to_svg: bool = False,
                                directory: str = "graphviz_output", keep_gv: bool = False) -> Digraph:
+                                   
         dot = Digraph(fig_name)
-
         dot.node("PROC_MAIN_LOOP", "MAIN", shape="diamond")
         for ident, loop in self.__loop_pool.items():
             label = str(ident) if not head_and_tail else "{}[{}: {}]".format(ident, loop.head, loop.tail)
@@ -394,15 +391,16 @@ class CacheCFG:
                 fontcolor = "chocolate4" if is_backside and highlight_backside \
                     else "darkgreen" if is_dupl and highlight_dupl_edge else "black"
                 dot.edge(str(src), str(dst), label=label, color=color, fontcolor=fontcolor)
+                
         if removed_edge:
             for src, dst in self.__removed_edges:
                 dot.edge(str(src), str(dst), color="gray", style="dashed")
-
         if to_svg:
             dot.format = "svg"
             dot.render(directory=directory).replace("\\", "/")
         if not keep_gv:
             os.remove(os.path.join(directory, "{}.gv".format(fig_name)))
+            
         return dot
 
     @property
