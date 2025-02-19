@@ -6,9 +6,7 @@ import time
 import traceback
 from sys import stdout
 from typing import TextIO, List
-
 import alive_progress
-
 from sample.analyser import WCETAnalyser
 from sample.cache.cache_config import CacheConfig, read_cache_config_from_json
 from sample.frontend.isa import Addr
@@ -88,7 +86,6 @@ class CLI:
         self.__arg_space = arg_space
         self.__f = self.__abs_path(arg_space.file)
         self.__solver_loc = arg_space.solver
-
         self.__output_dir = self.__abs_path(arg_space.output_dir)
         if not os.path.isdir(self.__output_dir):
             os.mkdir(self.__output_dir)
