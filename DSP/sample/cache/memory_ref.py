@@ -9,11 +9,13 @@ from sample.isa.isa_syntax import Instruction
 def inst_block_gen(start_addr: int, b_size: int, cache_config: CacheConfig) -> List[MemoryBlock]:
     blocks: List[MemoryBlock] = list()
     s_cache_addr = start_addr >> cache_config.line_bitlen
+    
     e_cache_addr = (start_addr + b_size - 1) >> cache_config.line_bitlen
     for addr in range(s_cache_addr, e_cache_addr + 1):
         set_index = addr & ((1 << cache_config.set_bitlen) - 1)
         tag = addr >> cache_config.set_bitlen
         blocks.append(MemoryBlock(tag=tag, set_index=set_index))
+        
     return blocks
 
 
@@ -26,7 +28,6 @@ class InstMemoryRef:
             bb_start_addr = bb.start_addr.to_dec()
             bb_size = bb.code[-1].addr.to_dec() + (len(bb.code[-1].opcode) // 2) - bb_start_addr
             bb_block: Tuple[MemoryBlock, ...] = tuple(inst_block_gen(bb_start_addr, bb_size, cache_config))
-
             self.__refs[node.nid] = (bb_start_addr, bb_size, bb_block)
 
     @property
@@ -66,3 +67,4 @@ class DataMemoryRef:
 
     def __getitem__(self, item: Hashable) -> Dict[Instruction, Set[MemoryBlock]]:
         return self.__refs[item]
+        
