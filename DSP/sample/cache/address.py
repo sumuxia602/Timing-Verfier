@@ -58,6 +58,7 @@ def inst_semantics(inst: Instruction):
         r_op = inst.operands[1].imm if inst.operands[1].ty == OperandTyEnum.Immediate \
             else Reg(inst.operands[1].reg)
         return l_op + r_op * 4
+        
     elif inst.name == "ADDAD":
         l_op = inst.operands[0].imm if inst.operands[0].ty == OperandTyEnum.Immediate \
             else Reg(inst.operands[0].reg)
@@ -71,6 +72,7 @@ def inst_semantics(inst: Instruction):
         r_op = inst.operands[1].imm if inst.operands[1].ty == OperandTyEnum.Immediate \
             else Reg(inst.operands[1].reg)
         return l_op - r_op
+        
     elif inst.name == "SHL":
         l_op = inst.operands[0].imm if inst.operands[0].ty == OperandTyEnum.Immediate \
             else Reg(inst.operands[0].reg)
@@ -79,14 +81,19 @@ def inst_semantics(inst: Instruction):
         if inst.operands[1].ty != OperandTyEnum.Immediate:  # z3 doesnt support non-immediate exponent such as 2**B1
             return l_op * r_op
         return l_op * (2 ** r_op)
+        
     elif inst.name == "MV":
         return Reg(inst.operands[0].reg)
+        
     elif inst.name == "MVK":
         return RegVal(inst.operands[0].imm)
+        
     elif inst.name == "MPY32":
         return Reg(inst.operands[0].reg) * Reg(inst.operands[1].reg)
+        
     elif inst.is_load:
         return Reg(str(inst.operands[0]))
+        
     else:
         return z3.BitVec(str(inst.operands[0]), 32)
 
@@ -112,7 +119,6 @@ def MVKH_handler(mvkh: Instruction, considered_inst: List[Instruction]):
 def get_regs_in_z3_expr(expr: z3.ArithRef):
     '''Extracting variables from a z3 expression'''
     regs = set()
-
     variables = z3util.get_vars(expr)
 
     for var in variables:
@@ -141,12 +147,14 @@ def addr_mb_map(start_addr: int, b_size: int, cache_config: CacheConfig) -> Set[
         blocks.append(MemoryBlock(tag=addr >> cache_config.set_bitlen,
                                   set_index=addr & ((1 << cache_config.set_bitlen) - 1)))
         return set(blocks)
+        
     s_cache_addr = start_addr >> cache_config.line_bitlen
     e_cache_addr = (start_addr + b_size - 1) >> cache_config.line_bitlen
     for addr in range(s_cache_addr, e_cache_addr + 1):
         set_index = addr & ((1 << cache_config.set_bitlen) - 1)
         tag = addr >> cache_config.set_bitlen
         blocks.append(MemoryBlock(tag=tag, set_index=set_index))
+        
     return set(blocks)
 
 
