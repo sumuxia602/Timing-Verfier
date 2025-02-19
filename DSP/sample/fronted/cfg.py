@@ -155,11 +155,8 @@ class EPacket:
             raise NotImplementedError("Multiple branch instructions")
 
         self.ists = tuple(ists)
-
         self.num_ists = len(self.ists)
-
         self.start_addr = self.ists[0].addr
-
         self.end_addr = self.ists[-1].addr
 
     def __str__(self) -> str:
@@ -176,7 +173,6 @@ class EPacket:
         for ist in self.ists:
             if isinstance(ist, Instruction) and ist.name == "ADDKPC":
                 return ist
-
         raise CFGException("Can't find ADDKPC instruction.")
 
     @property
@@ -210,7 +206,6 @@ class CFGNode:
     """Control-flow graph node type."""
 
     def __init__(self, eps: Sequence[EPacket], nid: int) -> None:
-
         self.nid = nid
         self.eps: Tuple[EPacket, ...] = tuple(eps)
         self.code: Tuple[Instruction, ...] = \
@@ -846,6 +841,7 @@ class Proc:
                     ndct[bb.start_addr] = bb
                 elif counter < 0:
                     ndct[node.start_addr] = node
+                            
             if not bfound or counter > 0:
                 bb = CFGNode([ep for ep in node.eps], node.nid)
                 ne = self.next_entry(bb.start_addr)
