@@ -38,10 +38,13 @@ def do_pipeline_simulation_in_block(block_id, fps: Sequence[FPInPipeline], fps_i
     fp_in_ps: Optional[FPInPipeline] = None
     fp_in_pw: Optional[FPInPipeline] = None
     fp_in_pr: Optional[FPInPipeline] = None
+                                      
     # Decode:DP is the stage when FP is dispatched into EP(s).
     fp_in_dp: Optional[FPDispatch] = None
+                                      
     # After Decode:DP, data flows in EP.
     ep_in_dc: Optional[EPInPipeline] = None
+                                      
     """ The last entry of ep_in_ei is redundant. This prevents external check for E10. """
     ep_in_ei: List[Optional[EPInPipeline]] = [None for _ in range(10 + 1)]  # So it is. the length of ep_in_ei is 11.
 
