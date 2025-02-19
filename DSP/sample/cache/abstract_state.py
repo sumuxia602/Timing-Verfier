@@ -149,6 +149,7 @@ class SetState:
 
         if do_sort:
             rtn_list = [sorted(item, key=lambda x: x.tag) for item in rtn_list]
+            
         return rtn_list
 
     def format_set_lines(self, title: Optional[str] = None, style="psql", simple: bool = False):
