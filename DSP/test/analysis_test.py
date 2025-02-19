@@ -90,12 +90,14 @@ for test_case, res in test_cases:
                          loop_cons_file=_loop_cons_dir,
                          pred_cycle=analyser.cycle_constrain)
     lp_str = ilp_model.gen_ilp_model()
+    
     with open("%s.lp" % prefix, "w", encoding="UTF-8") as f:
         f.write(lp_str)
     infpath = InfPath(analyser.loop_hierarchy, "%s.lp" % prefix)
     infpath.iterative_solve()
     lp_solve = LPSolve("%s.lp" % prefix)
     elapse_time = lp_solve.solve()
+    
     assert lp_solve.is_bound
     end_time = time.time()
     elapsed_time = end_time - start_time
