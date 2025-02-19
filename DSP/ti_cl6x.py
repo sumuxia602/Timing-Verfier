@@ -133,9 +133,7 @@ def get_machine_code(c_file_path) -> None:
     os.remove("./%s.obj" % file_name)  # delete object file
     os.remove("./a.out")  # delete binary file
 
-
 SCRIPT_DESCRIPTION = "Interface of C6000 compiler (ti-cgt-c6000_8.1.0)."
-
 
 def main():
     argparser = argparse.ArgumentParser(
@@ -175,7 +173,6 @@ def main():
         ofd6x(args.file, 'dline')
     if args.dump_slist:
         nm6x(args.file, 'slist')
-
 
 if __name__ == "__main__":
     main()
