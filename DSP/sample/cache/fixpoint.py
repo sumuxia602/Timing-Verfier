@@ -9,6 +9,7 @@ from sample.cache.memory_ref import InstMemoryRef, DataMemoryRef
 
 
 class FixpointState:
+    """ 不动点的instate和outstate """
     def __init__(self, cache_config: Optional[CacheConfig] = None, analysis_type: Optional[CacheAnalysisMethod] = None,
                  init_state: Optional[CacheState] = None):
 
@@ -24,6 +25,7 @@ class FixpointState:
 
 
 class Fixpoint:
+    """ 用于不动点迭代 """
     def __init__(self, cfg: CacheCFG, cache_config: CacheConfig):
         self.__cfg = cfg
         self.__cache_config = cache_config
@@ -97,6 +99,7 @@ class Fixpoint:
 
         return dict(state_map)
 
+    
     def do_analysis_data(self, analysis_type: CacheAnalysisMethod, data_refs: DataMemoryRef,
                          level: Optional[Hashable] = None) -> Dict[Hashable, FixpointState]:
         """"""
