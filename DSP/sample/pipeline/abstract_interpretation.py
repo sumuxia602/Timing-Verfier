@@ -88,6 +88,7 @@ class InstInPipeline:
 
 
 class EPInPipeline:
+    
     def __init__(self, ep_id: Union[int, str], ep: EPacket):
         self.__ep_id = ep_id
         self.__ep = ep
@@ -159,6 +160,7 @@ def tcfg_node_to_eps_in_pipeline(node: TCFGNode) -> List[EPInPipeline]:
 
 
 class FPInPipeline:
+    
     def __init__(self, fp_id: int, eps: Tuple[EPInPipeline, ...]):
         self.__fp_id = fp_id
         self.__num_ep = len(eps)
@@ -180,6 +182,7 @@ class FPInPipeline:
 
 
 class FPDispatch(FPInPipeline):
+    
     def __init__(self, *args, **kwargs):
         super(FPDispatch, self).__init__(*args, **kwargs)
         self.__next_ep_idx = 0
@@ -196,8 +199,8 @@ class FPDispatch(FPInPipeline):
 
 
 def eps_in_pipeline_to_fps_in_pipeline(eps: Sequence[EPInPipeline]) -> List[FPInPipeline]:
+    
     fetch_packets = list()
-
     """
     First get ranges of all fetch packets. Range is in form of [left, right), which means execute packets from eps[left] to eps[right-1] 
     consist of a fetch packet.
@@ -211,6 +214,7 @@ def eps_in_pipeline_to_fps_in_pipeline(eps: Sequence[EPInPipeline]) -> List[FPIn
                 fetch_packets.append((cur_fp_start, ep_in_pipeline.ep_id))
             cur_fp_start = ep_in_pipeline.ep_id
             cur_fp_addr = fp_addr
+            
     # The last one fetch packet.
     if cur_fp_addr is not None:
         fetch_packets.append((cur_fp_start, len(eps)))
@@ -224,6 +228,7 @@ def eps_in_pipeline_to_fps_in_pipeline(eps: Sequence[EPInPipeline]) -> List[FPIn
 
 
 def fps_in_pipeline_to_cache_line(fps: Sequence[FPInPipeline], cache_config: CacheConfig) -> Tuple[List[MemoryBlock], List[bool]]:
+    
     aligned_addr = [fp_in_pipeline[0].start_addr >> cache_config.line_bitlen for fp_in_pipeline in fps]
     set_index_mask = (1 << cache_config.set_bitlen) - 1
     fp_line_addr = [MemoryBlock(set_index=addr & set_index_mask, tag=addr >> cache_config.set_bitlen) for addr in aligned_addr]
