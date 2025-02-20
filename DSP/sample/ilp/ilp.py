@@ -82,9 +82,6 @@ class ILPModel:
                 self.__int_vars.add("dr%d_%d.h"%(node_id, inst_id))
                 self.__int_vars.add("dr%d_%d.m"%(node_id, inst_id))
 
-        
-
-
         # The loop constraint file
         self.__loop_cons_file = loop_cons_file
 
@@ -100,7 +97,6 @@ class ILPModel:
         # persistent data reference for generating cache constrain
         self.__data_cache_cons = data_cache_cons
 
-
         # inst cache config
         self.__inst_cache_config = inst_cache_config
 
@@ -108,8 +104,8 @@ class ILPModel:
         self.__data_cache_config = data_cache_config
 
     def gen_obj_func(self) -> str:
-        """ Generate object function.
-        
+        """ 
+        Generate object function.
         The object function is of the form: c_0 * b_0 + c_1 * b_1 + ... + c_n * b_n
         where c_i is the running time of the block in the worst case,
         b_i is the number of times block B_i is executed when the program take the maximum time to complete.
@@ -132,13 +128,12 @@ class ILPModel:
         for node_id, inst_con in self.__inst_cache_cons.items():
             costs.extend(["%s x%d_%d.m"%(self.__inst_cache_config.penalty, node_id, block_id) 
                                 for block_id in range(len(inst_con))])
-        
+            
         # data cache term 
         for node_id, data_con in self.__data_cache_cons.items():
             costs.extend(["%s dr%d_%d.m"%(self.__data_cache_config.penalty, node_id, inst_id) 
                                 for inst_id in range(len(data_con))])
         
-            
         obj_func = " + ".join(costs)
         obj_func = obj_func.replace("+ -","- ") # # Negative execute cycles may occur
         return obj_func
@@ -188,8 +183,7 @@ class ILPModel:
             raise RuntimeError("Hypothesis does not hold, length of cfg_node is {} for addrs {}.".format(len(cfg_node), addrs))
 
         if len(cfg_node) == 1:
-            """ Situation 1: self loop, len(cfg_node) == 1. 
-            """
+            """ Situation 1: self loop, len(cfg_node) == 1. """
             node = cfg_node.pop()
             if node.is_self_loop():
                 # raise RuntimeError("Node {} is considered as a self loop but attribute is_self_loop is False.".format(node.nid))
@@ -235,7 +229,6 @@ class ILPModel:
         """ Given a loop head node and its upper bound, generate corresponding loop constraint in which
         the execution times of loop head would be less than (bound - 1) times of its predecessor.
         """
-
         if len(loop_head.in_edges) > 2:
             raise NotImplementedError("More than two incoming edges is not supported now.")
         tail_addr = loop_tail.start_addr
@@ -667,6 +660,7 @@ class MPS:
                 update_col(cols[i], row, -int(cols[i-1]))
     
     def gen_RHS(self) -> None:
+        
         for i, cons in enumerate(self.tcfg_cons):
             if int(cons.split()[-1]) != 0: # zero is default
                 self.RHS["CONS%s" % i] = int(cons.split()[-1])
@@ -693,4 +687,5 @@ class MPS:
             "\n".join("    %-10s%-10s%12s" % ("rhs", row, val) for row, val in self.RHS.items()),
             "SOS",
             "ENDATA"]
+        
         return "\n".join(mps)
