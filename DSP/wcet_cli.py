@@ -234,7 +234,6 @@ class CLI:
             ColorfulConsole.task_finish()
 
     def run(self):
-
         if self.__arg_space.frontend:
             self.__frontend()
         elif self.__arg_space.no_ilp:
