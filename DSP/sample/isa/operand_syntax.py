@@ -215,6 +215,7 @@ class IndAddrOperand(OperandObject):
         super(IndAddrOperand, self).__init__(ty, tokens)
         self.__ind_pre, self.__ind_post = self._tokens[0], self._tokens[2]
         self.__base_reg = self._tokens[1]
+        
         if self._tokens[4] is not None:
             try:
                 offset = int(self._tokens[4], 10)
