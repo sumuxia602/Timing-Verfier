@@ -7,7 +7,6 @@ import time
 import pandas as pd
 import os
 import argparse
-# import 
 import numpy as np #
 
 start_list = set()   #开始行号集合
@@ -25,7 +24,6 @@ block_start_line = {}   #建立每个基本块初始行与块号的映射
 addr_to_location = {}   #指令地址对行号的映射
 
 basicblock_list = []    #基本块集合
-
 edge_list = []     #边集合
 
 # 将16进制字符串转换为int
