@@ -1,0 +1,6 @@
+{
+    "benchmark": "fibcall",
+    "asm": "fibcall.asm",
+    "asm_detailed": "fibcallD.asm",
+    "skip_as_plt": []
+}
