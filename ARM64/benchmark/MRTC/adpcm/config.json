@@ -1,0 +1,7 @@
+{
+    "benchmark": "adpcm",
+    "asm": "adpcm.asm",
+    "asm_detailed": "adpcmD.asm",
+    "procedure_cfg": ["all"],
+    "skip_as_plt": []
+}
