@@ -821,7 +821,8 @@ class LoopAnalysis:
 
     def find_mem_val(self, root: Reg, insts: tuple[Instruction, ...], m: MemRef
                      ) -> Reg:
-        """Find the register whose value is stored in the given 
+        """
+        Find the register whose value is stored in the given 
         memory reference m after executing the code in path and equals to root.
         """
         for inst in insts:
