@@ -201,8 +201,7 @@ def collect_epkt(code: Sequence[Instruction]) -> Tuple[EPacket, ...]:
 
 
 class CFGNode:
-    """Control-flow graph node type."""
-
+    """ Control-flow graph node type. """
     def __init__(self, eps: Sequence[EPacket], nid: int) -> None:
         self.nid = nid
         self.eps: Tuple[EPacket, ...] = tuple(eps)
