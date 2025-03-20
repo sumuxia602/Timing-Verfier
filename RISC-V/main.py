@@ -150,7 +150,7 @@ class RISC_V_Instruction:
 def if_useful_instructions(line):  #判断汇编代码中的语句是否是有用指令
     parts = str_split(line)
 
-    #1为无用指令，可能为空白或别的字符串；0为有用指令，其中包含地址
+    # 1为无用指令，可能为空白或别的字符串；0为有用指令，其中包含地址
     if len(parts) == 0:
         return 1
     elif type(convert_to_hex_if_possible(parts[0])) is not int:
@@ -159,7 +159,7 @@ def if_useful_instructions(line):  #判断汇编代码中的语句是否是有�
         return 0
 
 
- #加载汇编文件并构建函数名到行数的映射以及指令地址对行号的映射
+ # 加载汇编文件并构建函数名到行数的映射以及指令地址对行号的映射
 def load_useful_assembly_instructions(file_path):
     instructions = []
     instructions.append("")
@@ -178,7 +178,7 @@ def load_useful_assembly_instructions(file_path):
     return instructions
 
 
-#从指令集列表instuctions中修改start_list以及end_list的值，从start行开始（一般为main函数的起始行）
+# 从指令集列表instuctions中修改start_list以及end_list的值，从start行开始（一般为main函数的起始行）
 def create_cfg_list(start,instructions:List[str]):
     start_list.add(start)
     line_id = start
