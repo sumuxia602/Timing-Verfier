@@ -34,7 +34,7 @@ class Fixpoint:
 
     def do_analysis_inst(self, analysis_type: CacheAnalysisMethod, inst_refs: InstMemoryRef,
                          level: Optional[Hashable] = None) -> Dict[Hashable, FixpointState]:
-        """"""
+        """ """
         " Fixpoint分析的入口结点 "
         entry_node: Hashable = self.__cfg.entry_node_ident if level is None else self.__loops_dict[level].head
         " 被考虑的结点的集合 "
@@ -102,7 +102,7 @@ class Fixpoint:
     
     def do_analysis_data(self, analysis_type: CacheAnalysisMethod, data_refs: DataMemoryRef,
                          level: Optional[Hashable] = None) -> Dict[Hashable, FixpointState]:
-        """"""
+        """ """
         " Fixpoint分析的入口结点 "
         entry_node: Hashable = self.__cfg.entry_node_ident if level is None else self.__loops_dict[level].head
         " 被考虑的结点的集合 "
