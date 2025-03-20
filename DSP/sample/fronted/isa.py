@@ -300,8 +300,9 @@ def parse_ind_addr(s: str):
 
 
 class MemRef(Operand):
-    """Memory reference.
-    
+    """
+    Memory reference.
+
     A memory reference consists a base register with an offset, the offset
     can be either a constant or a register. 
     """
