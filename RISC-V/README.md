@@ -10,6 +10,7 @@
 sudo apt update
 sudo apt install build-essential gcc make perl dkms git  gdb-multiarch qemu-system-misc
 sudo apt install gcc-riscv64-linux-gnu
+
 #获取反汇编文件
 首先生成可执行文件（将example.c编译成可执行文件example）
 riscv64-linux-gnu-gcc -o example example.c
