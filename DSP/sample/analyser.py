@@ -307,8 +307,6 @@ class WCETAnalyser:
         return self.__max_iter
 
     def inst_cache_analysis_bb(self):
-        """"""
-
         """ Must cache analysis. """
         try:
             in_state: CacheState = self.__inst_must_states[self.__current_bock_id].in_state
@@ -373,6 +371,7 @@ class WCETAnalyser:
                                         "Persistent blocks: {}".format(self.__current_bock_id, self.__inst_must_blocks, self.__inst_persistent_blocks))
             else:
                 self.__inst_persistent_blocks = set()
+                
     def data_cache_analysis_bb(self):
         """"""
 
