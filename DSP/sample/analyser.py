@@ -538,8 +538,7 @@ class WCETAnalyser:
         return self.__behaviors
 
     def block_cycle_cons_gen(self, cons: Optional[Dict[int, List[int]]] = None):
-        """"""
-
+        """ """
         self.__cycle_cons: Dict[int, List[int]] = dict()
         if cons is not None:
             self.__cycle_cons.update(cons)
