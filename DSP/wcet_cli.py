@@ -82,7 +82,6 @@ class CLI:
 
     def __init__(self, arg_space: argparse.Namespace):
         """"""
-
         self.__arg_space = arg_space
         self.__f = self.__abs_path(arg_space.file)
         self.__solver_loc = arg_space.solver
