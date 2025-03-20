@@ -7,7 +7,6 @@ import time
 import pandas as pd
 import os
 import argparse
-import numpy as np #
 
 start_list = set()   #开始行号集合
 
