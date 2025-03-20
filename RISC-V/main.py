@@ -178,7 +178,7 @@ def load_useful_assembly_instructions(file_path):
     return instructions
 
 
-#从指令集列表instuctions中修改start_list以及end_list的值，从start行开始（一般为main函数的起始行）
+# 从指令集列表instuctions中修改start_list以及end_list的值，从start行开始（一般为main函数的起始行）
 def create_cfg_list(start,instructions:List[str]):
     start_list.add(start)
     line_id = start
