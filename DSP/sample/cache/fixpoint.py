@@ -171,8 +171,6 @@ class Fixpoint:
                             state.update([block])
                             state_list.append(state)
                         new_out_state = sum(state_list[1:], start=state_list[0])
-
-                # new_out_state.update(data_refs.get_blocks(cur_node.root))
                 state_map[cur_node_ident].out_state = new_out_state
 
                 """ 将该节点所有的后继结点加入队列q中。 """
