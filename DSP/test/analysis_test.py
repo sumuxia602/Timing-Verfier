@@ -70,6 +70,7 @@ for test_case, res in test_cases:
     analyser.data_cache_analysis_global()
     analyser.sp_loop_analysis_global()
     cycle_cons = dict()
+    
     for idx in range(len(analyser.blocks)):
         analyser.move_block_cursor_to(idx)
         analyser.abstract_interpretation_gen()
