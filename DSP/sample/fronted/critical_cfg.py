@@ -42,7 +42,7 @@ class CriticalCfg:
         return refined_ccfg
 
     def extract_ccfg(self, proc_name: str = None) -> tuple[tuple[TCFGNode, ...], ...]:
-        """Extract the code in critical area from TCFG."""
+        """ Extract the code in critical area from TCFG. """
         global_stack = [self.nodes[0]]  # stack used for globally dfs TCFG
         res = []
         global_seen_nodes = []  # used to record traversed nodes in global dfs
