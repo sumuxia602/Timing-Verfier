@@ -214,8 +214,8 @@ class LoopHrchy:
             self.loop_map[dst.nid].set_parent(self.loop_map[src.nid])
 
     def map_bbi_loop(self) -> None:
-        """Construct loop_map : map every TCFGNode to its loop, and map every 
-        head and tail of loops a parent loop.
+        """
+        Construct loop_map : map every TCFGNode to its loop, and map every head and tail of loops a parent loop.
         """
         worklist: Deque[TCFGNode] = deque([self.tcfg_nodes[0]])
         while worklist:
