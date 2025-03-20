@@ -74,7 +74,6 @@ class InstObject:
 class InstStream(InstObject):
     def __init__(self, tokens: Sequence[Optional[str]], *args, **kwargs):
         super(InstStream, self).__init__(tokens, *args, **kwargs)
-
         self._fp_begin: bool = (self._address % 32) == 0
         self._paralleled: bool = self._tokens[2] is not None
         self._spmasked: bool = self._tokens[3] is not None
