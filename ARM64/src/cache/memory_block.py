@@ -178,7 +178,6 @@ def memory_block_overlap(blck1: MemoryBlockWithScope, blck2: MemoryBlockWithScop
     的检查将进行到最内层。
 
     例如：
-
     >>> mem1 = MemoryBlockWithScope(0x10001, 1, scope=[(0, 2), (2, 3), (4, 5)])
     >>> mem2 = MemoryBlockWithScope(0x10001, 1, scope=[(1, 6), (2, 5), (8, 10)])
     >>> memory_block_overlap(mem1, mem2)
