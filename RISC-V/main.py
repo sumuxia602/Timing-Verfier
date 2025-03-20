@@ -135,8 +135,8 @@ class RISC_V_Instruction:
 
     @classmethod
     def from_assembly_line(cls, line: str, location: int) -> 'RISC_V_Instruction':
-        """从一行汇编代码创建 RISC_V_Instruction 对象，支持括号中的操作数
-        （前提是这个指令是一条指令而不是一个无用语句）
+        """
+        从一行汇编代码创建 RISC_V_Instruction 对象，支持括号中的操作数（前提是这个指令是一条指令而不是一个无用语句）
         """
         split_line = str_split(line)
         addr = split_line[0]
@@ -150,7 +150,7 @@ class RISC_V_Instruction:
 def if_useful_instructions(line):  #判断汇编代码中的语句是否是有用指令
     parts = str_split(line)
 
-    #1为无用指令，可能为空白或别的字符串；0为有用指令，其中包含地址
+    # 1为无用指令，可能为空白或别的字符串；0为有用指令，其中包含地址
     if len(parts) == 0:
         return 1
     elif type(convert_to_hex_if_possible(parts[0])) is not int:
@@ -159,7 +159,7 @@ def if_useful_instructions(line):  #判断汇编代码中的语句是否是有�
         return 0
 
 
- #加载汇编文件并构建函数名到行数的映射以及指令地址对行号的映射
+ # 加载汇编文件并构建函数名到行数的映射以及指令地址对行号的映射
 def load_useful_assembly_instructions(file_path):
     instructions = []
     instructions.append("")
