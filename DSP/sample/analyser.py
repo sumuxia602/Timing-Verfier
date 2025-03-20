@@ -445,8 +445,7 @@ class WCETAnalyser:
                 self.__data_persistent_refer = set()
     @property
     def inst_must_blocks(self):
-        """ Returns a collection that contains all memory blocks whose hit status is MUST after Cache sim.
-            Instances of MemoryBlock. """
+        """ Returns a collection that contains all memory blocks whose hit status is MUST after Cache sim. Instances of MemoryBlock. """
         return self.__inst_must_blocks
 
     @property
