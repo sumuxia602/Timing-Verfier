@@ -15,8 +15,7 @@ class LoopsExeception(Exception):
 class Loop:
     """Loop type."""
 
-    def __init__(self, lid: int, head: TCFGNode,
-                 tail: Optional[TCFGNode] = None) -> None:
+    def __init__(self, lid: int, head: TCFGNode, tail: Optional[TCFGNode] = None) -> None:
         self.lid = lid
         self.head = head
         self.tail: Optional[TCFGNode] = tail
