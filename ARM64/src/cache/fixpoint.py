@@ -19,13 +19,9 @@ class FixpointState:
         if cache_config is not None:
             self.in_state = MultiLevelCacheState(multilevel_cache_config=cache_config)
             self.out_state = MultiLevelCacheState(multilevel_cache_config=cache_config)
-            # self.nc_in_state_list.append(self.in_state)
-            # self.nc_out_state_list.append(self.out_state)
         elif init_state is not None:
             self.in_state = deepcopy(init_state)
             self.out_state = deepcopy(init_state)
-            # self.nc_in_state_list.append(self.in_state)
-            # self.nc_out_state_list.append(self.out_state)
         else:
             raise ValueError("At least one of cache_config and init_state should be provided for initialization.")
 
