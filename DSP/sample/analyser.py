@@ -373,8 +373,6 @@ class WCETAnalyser:
                 self.__inst_persistent_blocks = set()
                 
     def data_cache_analysis_bb(self):
-        """"""
-
         """ Must cache analysis. """
         try:
             in_state: CacheState = self.__data_must_states[self.__current_bock_id].in_state
@@ -398,7 +396,6 @@ class WCETAnalyser:
                     self.__data_must_refer.add(inst)
 
         """ Persistent cache analysis. considering the node in loop"""
-        
         try:
             loops = self.__cache_cfg.get_node_map_loop(self.__current_bock_id)
         except KeyError:
