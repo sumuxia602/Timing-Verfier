@@ -369,8 +369,8 @@ class WCETAnalyser:
                 # self.__inst_cache_cons[self.current_block_id] = persistent_blocks
                 self.__inst_cache_cons[self.current_block_id] = {block : loop_level for block, loop_level in persistent_blocks.items()
                                                                  if block not in self.__inst_must_blocks}
-                """ Validation:  
-                if a memory block is in must blocks, in persistent blocks.
+                """ 
+                Validation: if a memory block is in must blocks, in persistent blocks.
                 """
                 if self.current_block_id in self.__lphr.loop_map.keys() and self.__lphr.loop_map[self.current_block_id].lid:
                     if len([b for b in self.__inst_must_blocks if b not in self.__inst_persistent_blocks]) > 0:
