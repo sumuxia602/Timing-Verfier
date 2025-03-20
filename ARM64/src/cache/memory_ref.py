@@ -11,11 +11,6 @@ class Reference:
         self.__cache_address = cache_address
         self.__ref_type = ref_type
 
-        # if ref_type == RefType.INST:
-        #     cache_levels = [CacheHierarchy.L1I, CacheHierarchy.L2, CacheHierarchy.L3]
-        # else:
-        #     cache_levels = [CacheHierarchy.L1D, CacheHierarchy.L2, CacheHierarchy.L3]
-
         if ref_type == RefType.INST:
             cache_levels = [CacheHierarchy.L1I, CacheHierarchy.L2]
         else:
