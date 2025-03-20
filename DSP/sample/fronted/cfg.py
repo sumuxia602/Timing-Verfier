@@ -1861,7 +1861,6 @@ class Prog:
         for node in self.tcfg_nodes:
             if node.start_addr == addr:
                 return node
-
         return None
 
     def get_tnode_by_id(self, nid: int) -> TCFGNode:
