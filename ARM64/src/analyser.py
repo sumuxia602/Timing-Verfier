@@ -394,10 +394,6 @@ class CacheAnalyser:
                 if data_refs:
                     for inst, refs in data_refs.items():
                         if refs:
-                            # chmc = [self.categorize_data(proc, node, refs, CacheHierarchy.L1D),
-                            #         self.categorize_data(proc, node, refs, CacheHierarchy.L2),
-                            #         self.categorize_data(proc, node, refs, CacheHierarchy.L3)
-                            #         ]
                             chmc = [self.categorize_data(proc, node, refs, CacheHierarchy.L1D),
                                     self.categorize_data(proc, node, refs, CacheHierarchy.L2)
                                     ]
