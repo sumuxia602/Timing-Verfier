@@ -64,8 +64,6 @@ class LoopKind(Flag):
     LOOP_HEAD = 1
     LOOP_TAIL = 2
     LOOP_SELF = 3
-    # LOOP_SELF = 4
-
 
 
 class CFGEdgeKind(Enum):
