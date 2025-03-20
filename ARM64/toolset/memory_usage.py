@@ -11,10 +11,6 @@ def memory_usage(debug_path: str, input_name=None):
 
     # 打开文件进行写入（如果文件不存在，则创建；如果文件存在，则追加）
     with open(debug_path + "/htop.txt", 'a') as file:
-        # 写入当前时间
-        # file.write(f"Timestamp: {current_time}      ")
-        # file.write(f"Processes with command: {target_command}\n")
-
         # 遍历系统中所有进程
         for proc in psutil.process_iter(['pid', 'name', 'cmdline', 'cpu_percent', 'memory_info']):
             try:
