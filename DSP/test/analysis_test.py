@@ -103,3 +103,4 @@ for test_case, res in test_cases:
     elapsed_time = end_time - start_time
     print("Result %d" % int(float(lp_solve.obj_max_val)))
     print(f"Elapsed_time: {elapsed_time:.6f} s")
+
