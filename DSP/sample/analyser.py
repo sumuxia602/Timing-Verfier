@@ -284,8 +284,6 @@ class WCETAnalyser:
         return self.__execute_packets
 
     def sp_loop_analysis_bb(self):
-        """"""
-
         """ SPLoop related. """
         in_sp_loop = [o for o in self.__sp_loops if o[0] == self.__current_bock_id]
         if len(in_sp_loop) > 1:
