@@ -239,8 +239,6 @@ class WCETAnalyser:
         return self.__inst_persistent_states
 
     def sp_loop_analysis_global(self):
-        """"""
-
         """ All SPLoop bodies. """
         self.__sp_loops = sp_loop_scan(self.__prog, default_max_iter=1000)
 
