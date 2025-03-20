@@ -30,7 +30,7 @@ def cl6x_compile(c_file_path: str) -> None:
         _, err_msg = p.communicate()
         if err_msg != b'':
             raise Cl6xException(err_msg.decode("UTF-8"))
-# import
+
 
 def cl6x_link(obj_path: str) -> None:
     args = [
