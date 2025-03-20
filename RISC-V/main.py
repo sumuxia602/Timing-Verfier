@@ -150,7 +150,7 @@ class RISC_V_Instruction:
 def if_useful_instructions(line):  #判断汇编代码中的语句是否是有用指令
     parts = str_split(line)
 
-    # 1为无用指令，可能为空白或别的字符串；0为有用指令，其中包含地址
+    # 1 为无用指令，可能为空白或别的字符串；0 为有用指令，其中包含地址
     if len(parts) == 0:
         return 1
     elif type(convert_to_hex_if_possible(parts[0])) is not int:
@@ -441,7 +441,7 @@ def creat_cfg(instructions:List[str]): #构建cfg过程
         # 将基本块添加到列表中
         basicblock_list.append(block)
 
-        #cfg.add_node(block_id, block=block,label=f"Start: {block.start_line}; End: {block.end_line}")
+        # cfg.add_node(block_id, block=block,label=f"Start: {block.start_line}; End: {block.end_line}")
         block_id += 1
 
     edge_id = 0
