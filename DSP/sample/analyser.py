@@ -258,8 +258,6 @@ class WCETAnalyser:
         return self.__current_bock_id
 
     def abstract_interpretation_gen(self):
-        """"""
-
         """ Abstract Interpretation. """
         self.__execute_packets = tcfg_node_to_eps_in_pipeline(self.__prog.tcfg_nodes[self.__current_bock_id])
         self.__fetch_packets = eps_in_pipeline_to_fps_in_pipeline(self.__execute_packets)
