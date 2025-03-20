@@ -39,7 +39,6 @@ def RegVal(reg_value):
 
 
 def inst_semantics(inst: Instruction):
-    # print(inst)
     if inst.name == "ADD":
         l_op = inst.operands[0].imm if inst.operands[0].ty == OperandTyEnum.Immediate \
             else Reg(inst.operands[0].reg)
