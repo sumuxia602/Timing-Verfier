@@ -21,7 +21,7 @@ from collections import deque
 from enum import Enum, Flag, auto
 from typing import List, Optional, Tuple, Deque, Set, Dict, no_type_check, Sequence, Union
 
-import graphviz  # type: ignore
+import graphviz
 
 from sample.frontend.isa import Instruction, Addr
 
