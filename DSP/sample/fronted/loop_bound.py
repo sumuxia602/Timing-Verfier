@@ -63,8 +63,7 @@ def parse_operand(s: str) -> Operand:
         raise NotImplementedError(s)
 
 
-def split_mem_inst(inst: Instruction
-                   ) -> tuple[Instruction, Instruction]:
+def split_mem_inst(inst: Instruction) -> tuple[Instruction, Instruction]:
     """ Split the given load / store instruction """
     assert inst.name in ("STW", "STH", "LDW", "LDH", "LDHU"), \
         "%s is not a load / store instruction"
