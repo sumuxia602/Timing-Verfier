@@ -101,8 +101,7 @@ class Loop:
 
 
 class LoopHrchy:
-    """Traverse tcfg to form a loop hierarchy and associate 
-    each bbi its loop level."""
+    """ Traverse tcfg to form a loop hierarchy and associate each bbi its loop level. """
 
     def __init__(self, tcfg_nodes: List[TCFGNode]) -> None:
         self.tcfg_nodes = tuple(tcfg_nodes)
