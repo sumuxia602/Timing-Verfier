@@ -256,9 +256,6 @@ class Address_analyser():
 
         if debug:
             print("Starting expand (%s)" % inst)
-            # print("    considered insts")
-            # for inst in considered_insts:
-            #     print("        ",inst)
             print("    Data reference = %s" % (linear_expression))
 
         skip_remaining = 0
