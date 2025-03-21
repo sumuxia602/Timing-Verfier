@@ -317,7 +317,7 @@ class CacheAnalyser:
             must_count = 0
             base_count = len(self.__proc_fixpoint[proc].state_map[node].nc_in_state_list)
             if base_count == 0:
-                nc_proc = 0.0  # 默认值（或者根据需求设定）
+                nc_proc = 0.0  
             else:
                 for state in self.__proc_fixpoint[proc].state_map[node].nc_in_state_list:
                     if state.get_state(CacheAnalysisMethod.MAY, cache_hierarchy).in_cache(
