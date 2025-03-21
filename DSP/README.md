@@ -3,7 +3,7 @@
 
 ## 安装和使用
 本项目需要使用Python 3.8或以上版本，<u>[Graphviz](https://graphviz.org/)<u>，
-[TI C6000系列编译器](https://www.ti.com/tool/C6000-CGT)</u>和
+[TI C6000系列编译器](https://www.ti.com/tool/C6000-CGT)</u> 和
 线性规划求解器 <u>[lpsolve](https://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.11/lp_solve_5.5.2.11_exe_win64.zip/download)</u>。
 
 ### Python依赖
