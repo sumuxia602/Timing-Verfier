@@ -1,6 +1,6 @@
 # RISC-V
 ## RISC-V生成CFG
-面向RISC-V经过C语言经RV64G汇编成汇编代码再生成CFG。
+面向RISC-V经过C语言经RV64G汇编成汇编代码再生成 CFG。
 
 ## 安装和使用
 本项目需要使用Python 3.11或以上版本。
