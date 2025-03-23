@@ -105,6 +105,7 @@ if __name__ == '__main__':
                          for dir_path in _args.file for filepath, _, filenames in os.walk(dir_path) for filename in filenames]
             all_files = [f for f in all_files if os.path.splitext(os.path.basename(f))[-1] == '.dinfo']
             _args.file = all_files
+            
         main(_args)
 
     except Exception as _:
