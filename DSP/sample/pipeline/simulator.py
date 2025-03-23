@@ -203,7 +203,6 @@ def do_pipeline_simulation_in_block(block_id, fps: Sequence[FPInPipeline], fps_i
                 fp_in_dp = None
 
             """ Check if multi-cycle NOPs stall happens. """
-
             inst_id, _, cycle = ep_in_dc.multi_cycle_nop
             if inst_id is not None:
                 behavior_append(pipeline_tracer, (PipelineBehavior.MULTI_CYCLE_NOP_STALL, ep_in_dc.ep_id, inst_id, cycle))
