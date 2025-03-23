@@ -24,7 +24,6 @@ def sp_loop_scan(prog: Prog, cons_f: Optional[str] = None, default_max_iter: int
     Returns: A list representing SPLOOP, in which every element is a triplet,
     including ID of the basic block, type of SPLOOP (Enum in ``SPLoopType``), ii, and maximum iteration.
     """
-
     spl_list: List[Tuple[int, SPLoopType, int, int]] = list()
 
     if cons_f is not None:
