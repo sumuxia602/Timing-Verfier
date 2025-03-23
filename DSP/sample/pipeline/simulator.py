@@ -322,7 +322,6 @@ def do_pipeline_simulation_in_block(block_id, fps: Sequence[FPInPipeline], fps_i
         """ ========================================================================================================================= """
 
         """ Print out pipeline status of the end of current stage. """
-
         if log and status_log:
             status_fetch_decode = tabulate.tabulate([["FP_{}".format(fp_in_pg.fp_id) if fp_in_pg is not None else ".",
                                                       "FP_{}".format(fp_in_ps.fp_id) if fp_in_ps is not None else ".",
