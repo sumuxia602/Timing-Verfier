@@ -170,7 +170,6 @@ class CacheCFG:
             )
 
     def read_from_front_end(self, prog: Prog, loop_hr: LoopHrchy):
-        """ """
         """ Nodes """
         for node in prog.tcfg_nodes:
             start_inst = 0
