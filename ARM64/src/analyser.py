@@ -539,7 +539,7 @@ class CacheAnalyser:
         L1_dcache_rate = L1_dcache_misses / L1_dcache_loads
         L1_dcache_rate_noNC = L1_dcache_misses_noNC / L1_dcache_loads
 
-        print("L1_dcache_loads:", L1_dcache_loads)
+        # print("L1_dcache_loads:", L1_dcache_loads)
         print("L1_dcache_misses:", L1_dcache_misses)
         print("L1_dcache_rate:", L1_dcache_rate)
         print("L1_dcache_misses noNC:", L1_dcache_misses_noNC)
