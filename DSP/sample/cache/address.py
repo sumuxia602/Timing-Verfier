@@ -268,7 +268,7 @@ class Address_analyser():
                 skip_remaining -= 1
                 continue
 
-                # TODO Handle RegisterPair and RegisterQuadruplet
+            # TODO Handle RegisterPair and RegisterQuadruplet
             if (update_inst.is_load and update_inst.operands[-1].ty in (
             OperandTyEnum.RegisterPair, OperandTyEnum.RegisterQuadruplet) \
                 and set(update_inst.operands[-1].reg_pair).intersection(target_registers)) \
