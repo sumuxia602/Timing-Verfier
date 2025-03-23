@@ -6,7 +6,6 @@ from sample.pipeline.behaviors import default_pipeline_behavior_translation, Pip
 class PipelineTracer:
     def __init__(self):
         """ """
-
         self.__current_cycle: int = 0
 
         """ Basic """
