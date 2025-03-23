@@ -271,7 +271,7 @@ class OpNode:
                       for leaf in child.leaves()])
 
     def subst_leaf(self, m: Operand, r: Operand) -> OpNode:
-        """Replace a memory reference in the leaf to a register."""
+        """ Replace a memory reference in the leaf to a register. """
         if not self.children:
             if self.root == m:
                 return OpNode(r, self.prevs, self.loc, tuple(),
