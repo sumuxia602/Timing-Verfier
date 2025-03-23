@@ -159,7 +159,7 @@ class OpNode:
         return self
 
     def post_order(self) -> tuple[OpNode, ...]:
-        """Post-order traversal."""
+        """ Post-order traversal. """
         if self.post_order_nodes:
             return self.post_order_nodes
         if not self.children:
