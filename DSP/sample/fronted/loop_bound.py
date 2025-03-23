@@ -387,7 +387,7 @@ def transpose(m: Mat) -> Mat:
 
 
 def collect_coeff(p: z3.ExprRef) -> tuple[tuple[int, str], ...]:
-    """Given a linear z3 expression, return the pair of (coeff, var)."""
+    """ Given a linear z3 expression, return the pair of (coeff, var). """
     if z3.is_add(p):
         return collect_coeff(p.arg(0)) + collect_coeff(p.arg(1))
     elif z3.is_mul(p):
