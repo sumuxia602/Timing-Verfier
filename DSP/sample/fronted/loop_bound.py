@@ -372,7 +372,7 @@ class CondOpNode(OpNode):
 
 
 def check_square_mat(m: Mat) -> bool:
-    """Check if the number of rows equals to the number of columns."""
+    """ Check if the number of rows equals to the number of columns. """
     row_num = len(m)
     return all(len(col) == row_num for col in m)
 
