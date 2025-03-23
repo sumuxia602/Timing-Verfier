@@ -104,12 +104,10 @@ class MemoryBlockWithScope(MemoryBlock):
     def __init__(self, tag: int, set_index: int, scope: Sequence[Tuple[int, int]]) -> None:
         """
         初始化 ``MemoryBlockWithScope`` 实例。
-
         Args:
             tag: 内存块在Cache中对应集合中的索引。
             set_index: 内存块在Cache中所在的集合下标。
             scope: 内存访问的temporal scope。
-
         """
         super(MemoryBlockWithScope, self).__init__(tag=tag, set_index=set_index)
         self.__scope = tuple(scope)
