@@ -493,7 +493,7 @@ class RankFinder:
             return -1 * cond_expr <= -1
 
     def translate_update(self, m: OpNode) -> z3.ExprRef:
-        """Build the z3 expression for an update."""
+        """ Build the z3 expression for an update. """
         if str(m.root) not in self.names:
             self.names[str(m.root)] = z3.Int("v_%s" % len(self.names))
         update_var = z3.Int("%s'" % self.names[str(m.root)])
@@ -502,7 +502,7 @@ class RankFinder:
 
     def gen_update_ineq(self, update: z3.BoolRef,
                         cond: z3.BoolRef) -> z3.BoolRef:
-        """Generate the update linear inequality for variable v_k"""
+        """ Generate the update linear inequality for variable v_k """
         assert z3.is_eq(update)
         assert z3.is_le(cond)
         d_cond = {c: v for v, c in collect_coeff(cond.arg(0))}
@@ -524,7 +524,7 @@ class RankFinder:
 
     def gen_lasw_row(self, e: z3.BoolRef) -> \
             tuple[tuple[int, ...], tuple[int, ...], int]:
-        """Given an inequality, return the corresponding row in AA' <= b."""
+        """ Given an inequality, return the corresponding row in AA' <= b. """
         var_num = len(self.names)
         assert z3.is_le(e)
         lhs, rhs = e.arg(0), e.arg(1)
@@ -549,7 +549,7 @@ class RankFinder:
         return tuple(A1), tuple(A2), rhs.as_long()
 
     def gen_lasw_mat(self) -> tuple[Mat, Mat, Col]:
-        """Generate the LASW matrix AA' ≤ b."""
+        """ Generate the LASW matrix AA' ≤ b. """
         A1, A2, b_vec = [], [], []
         ineqs = []
         cond_expr = self.translate_cond()
@@ -565,8 +565,8 @@ class RankFinder:
         return tuple(A1), tuple(A2), tuple(b_vec)
 
     def check_system(self, A1: Mat, A2: Mat, b_vec: Col) -> bool:
-        """Check if there exists x' satisfies the system:
-            AA'⋅[x,x']^T ≤ b
+        """
+        Check if there exists x' satisfies the system: AA'⋅[x,x']^T ≤ b
         """
         assert A1 and A2 and b_vec
         assert len(A1) == len(A2) == len(b_vec)
@@ -638,7 +638,7 @@ class RankFinder:
         return rf, delta_0, delta
 
     def dump_lasw(self) -> None:
-        """Generate the lasw program."""
+        """ Generate the lasw program. """
         print("Information about lasw")
         cond = self.translate_cond()
         print("condition")
@@ -653,8 +653,9 @@ class RankFinder:
 
 
 def refine_code(insts: tuple[Instruction, ...]) -> tuple[Instruction, ...]:
-    """Delete the code which are not useful in register 
-    expansion and split the non-atomic instructions"""
+    """
+    Delete the code which are not useful in register expansion and split the non-atomic instructions
+    """
     r = []
     for inst in insts:
         if inst.is_fp_head:
@@ -674,9 +675,10 @@ def refine_code(insts: tuple[Instruction, ...]) -> tuple[Instruction, ...]:
 
 def find_loop_insts(insts: tuple[Instruction, ...],
                     addr: Addr) -> tuple[Instruction, ...]:
-    """Given a sequence of loop instructions and an address addr, 
-    return instructions which are executed before the instruction on addr 
-    in the loop."""
+    """
+    Given a sequence of loop instructions and an address addr, 
+    return instructions which are executed before the instruction on addr in the loop.
+    """
     before, after = [], []
     for i, inst in enumerate(insts):
         before.append(inst)
@@ -695,8 +697,9 @@ Path = tuple[ID, ...]
 
 
 class LoopAnalysis:
-    """Analyze the loop bound through the algorithm proposed in 
-            `A Complete Method for the Synthesis of Linear Ranking Functions`.
+    """
+    Analyze the loop bound through the algorithm proposed in 
+    `A Complete Method for the Synthesis of Linear Ranking Functions`.
     """
 
     def __init__(self, lp: Loop) -> None:
@@ -704,7 +707,7 @@ class LoopAnalysis:
         self.nodes: dict[tuple[int, ...], tuple[TCFGNode, ...]] = dict()
 
     def enumerate_path_rec(self) -> tuple[Path, ...]:
-        """Recursively depth-first traversal version of enumerating loop paths."""
+        """ Recursively depth-first traversal version of enumerating loop paths. """
 
         def rec(node: TCFGNode) -> \
                 tuple[tuple[int, ...], ...]:
@@ -726,7 +729,7 @@ class LoopAnalysis:
         return rec(self.lp.head)
 
     def enumerate_path(self) -> tuple[Path, ...]:
-        """Iteratively depth-first traversal version of enumerating loop paths."""
+        """ Iteratively depth-first traversal version of enumerating loop paths. """
         assert self.lp.tail is not None, "tail does not exist"
         tail_id = self.lp.tail.nid
         path: list[Path] = []
@@ -819,8 +822,7 @@ class LoopAnalysis:
 
         return tuple(cond_nodes)
 
-    def find_mem_val(self, root: Reg, insts: tuple[Instruction, ...], m: MemRef
-                     ) -> Reg:
+    def find_mem_val(self, root: Reg, insts: tuple[Instruction, ...], m: MemRef) -> Reg:
         """
         Find the register whose value is stored in the given 
         memory reference m after executing the code in path and equals to root.
