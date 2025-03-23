@@ -444,7 +444,7 @@ class RankFinder:
             raise NotImplementedError(op)
 
     def translate(self, m: OpNode) -> z3.ExprRef | z3.BoolRef:
-        """Translate the given opnode to a z3 expression."""
+        """ Translate the given opnode to a z3 expression. """
         depth = m.depth
         tree_info, _ = m.gen_step(depth)
         d: dict[int, list[z3.ExprRef]] = dict()
