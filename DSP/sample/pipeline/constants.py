@@ -186,6 +186,7 @@ class InstLookUpTable:
                 "LOR",
                 "UNPKH2"
             },
+        
         InstType.SINGLE_MULTI:
             {
                 "SMPYHL",
@@ -226,6 +227,7 @@ class InstLookUpTable:
                 "DAVGNRU4",
                 "DAVGNR2"
             },
+        
         InstType.MULTI_EXT:
             {
                 "QMPYSP",
@@ -294,6 +296,7 @@ class InstLookUpTable:
                 "DDOTPL2",
                 "DOTPSU4"
             },
+        
         InstType.BRANCH: {"B", "BDEC", "BPOS", "CALLP", "BNOP"},
         InstType.DP_CYCLE1: {"SPDP", "RCPDP", "ABSDP", "RSQRDP"},
         InstType.CYCLE3: {"FADDSP", "FSUBDP", "FADDDP", "DSPINTH", "DSUBSP", "FSUBSP", "DINTSPU", "DINTHSPU", "DADDSP", "DSPINT", "DINTHSP"},
