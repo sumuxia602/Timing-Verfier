@@ -47,7 +47,6 @@ class CacheCFGLoop:
         self.__father_loop: Optional[Hashable] = father_loop
         self.__paths: Tuple[Tuple[int, ...], ...] = None
         self.__loop_bound = None
-
         self.node_in_loop: Set[Hashable] = set()
         self.ancestor: List[Hashable] = list()
         self.descendant: List[Hashable] = list()
