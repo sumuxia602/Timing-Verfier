@@ -450,7 +450,7 @@ class CacheState:
     @property
     def runtime_ident(self) -> Tuple[int, ...]:
         """
-        方法在【运行时】将当前的abstract __cache state转化为一个元组并返回。返回的元组类型是 ``Tuple[int, ...]`` 。
+        方法在运行时将当前的abstract __cache state转化为一个元组并返回。返回的元组类型是 ``Tuple[int, ...]`` 。
 
         该方法针对每一个set调用 ``SetState.runtime_ident`` 方法， 并对返回的元组调用 ``__hash__()`` 方法。这样，用户既可以比较两个
         Cache State是否相同，也可以进一步地比较哪一个set发生了变化。
