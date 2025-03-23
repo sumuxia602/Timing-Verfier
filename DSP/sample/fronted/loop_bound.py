@@ -850,7 +850,8 @@ class LoopAnalysis:
     def find_loop_relation(self, path: Path,
                            loop_cond: CondOpNode,
                            debug: bool = False) -> tuple[OpNode, ...]:
-        """Given a loop path and a condition, return the update statement for 
+        """
+        Given a loop path and a condition, return the update statement for 
         each register appearing in the loop condition.
         """
         if debug:
@@ -906,8 +907,8 @@ class LoopAnalysis:
 
     def gen_rank_arguments(self, path: Path, debug: bool = False) \
             -> tuple[tuple[z3.ExprRef, int, int], ...]:
-        """Given a loop path, return all the possible triple 
-        (ranking functions, lower bound, derivative)."""
+        """ Given a loop path, return all the possible triple 
+        (ranking functions, lower bound, derivative). """
 
         rank_args = []
         conds = self.find_loop_cond(path, debug=debug)
