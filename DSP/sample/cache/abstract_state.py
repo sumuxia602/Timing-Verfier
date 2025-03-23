@@ -225,8 +225,7 @@ class SetState:
             [str(item) if not simple else hex(item.ident) for item in block_list]
             for _, block_list in ys.items()
         ]
-        row_index = \
-            [str(key) if not simple else "<{}, {}>".format(hex(key.tag), list(key.scope)) for key, _ in ys.items()]
+        row_index = [str(key) if not simple else "<{}, {}>".format(hex(key.tag), list(key.scope)) for key, _ in ys.items()]
         """ headers的第一列表示的是各个内存块，随后是数字,[0, L)，按顺序计数，其中L是values中最长的元素对应的长度。 """
         headers = ["Memory Blocks"] + list(range(max([len(x) for x in values])))
         """ 返回结果。如果title不为None，将标题添加在结果的最前面，用'\n'分隔。 """
