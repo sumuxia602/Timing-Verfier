@@ -287,7 +287,7 @@ class InfPath:
 
     def gen_cons(self, last_inst: Instruction, operand_state: Dict[Operand, z3.ExprRef], edge: TCFGEdge)\
                     -> Tuple[z3.BoolRef, List[Tuple[int, Instruction|None]]]:
-        """generate constraint of a cond jump. return inequality and trace"""
+        """ generate constraint of a cond jump. return inequality and trace """
         assert not edge.edge_kind in [TCFGEdgeKind.CALL, TCFGEdgeKind.RET, TCFGEdgeKind.NEVER_TAKEN]
 
         cond = Cond(last_inst.cond)
