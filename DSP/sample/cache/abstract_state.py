@@ -9,6 +9,7 @@ from sample.cache.constants import CacheAnalysisMethod
 from sample.cache.memory_block import *
 
 ScopeAwareAnalysisContext = Dict[str, Union[set, int]]
+
 """
 在进行 scope aware 分析时，除了要记录每个 reference 的 relative age 外，还需要记录他们的 younger set。
 ScopeAwareAnalysisContext 表示了这样一个内容的类型抽象。 例如，一个典型的进行 scope aware 分析时为 reference 记录的内容为：
@@ -16,6 +17,7 @@ ScopeAwareAnalysisContext 表示了这样一个内容的类型抽象。 例如�
 """
 
 SetAbsState = Dict[Union[int, MemoryBlockWithScopeIdent], Union[int, ScopeAwareAnalysisContext]]
+
 class SetState:
     """
     Abstract Set State.
