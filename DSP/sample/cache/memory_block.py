@@ -169,7 +169,6 @@ def memory_block_overlap(blck1: MemoryBlockWithScope, blck2: MemoryBlockWithScop
         blck2: 待判断的内存块。
         loop_level: 对temporal scope检查的最深循环等级。
 
-
     Returns: 如果他们发生overlap返回 ``True``，否则返回 ``False`` 。
 
     """
