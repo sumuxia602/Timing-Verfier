@@ -79,7 +79,6 @@ class MemoryBlock:
 class MemoryBlockWithScope(MemoryBlock):
     """
     继承自 ``MemoryBlock``，在其基础上加入了temporal scope (``scope``)。
-
     与 ``MemoryBlock`` 一样，该类型的实例总是一个常量，这意味着实例的初始化一旦完成，其在整个生存周期内不会被改变。
 
     Temporal scope
