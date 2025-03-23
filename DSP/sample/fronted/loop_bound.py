@@ -763,7 +763,7 @@ class LoopAnalysis:
         return self.nodes[path]
 
     def path_insts(self, path: Path) -> tuple[Instruction, ...]:
-        """Return the instructions in the given path"""
+        """ Return the instructions in the given path """
         nodes = self.path_node(path)
         return tuple(inst for node in nodes for inst in node.bb.code)
 
