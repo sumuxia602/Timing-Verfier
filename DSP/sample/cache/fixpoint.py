@@ -9,7 +9,7 @@ from sample.cache.memory_ref import InstMemoryRef, DataMemoryRef
 
 
 class FixpointState:
-    """ 不动点的instate和outstate """
+    """ 不动点的 instate和 outstate """
     def __init__(self, cache_config: Optional[CacheConfig] = None, analysis_type: Optional[CacheAnalysisMethod] = None,
                  init_state: Optional[CacheState] = None):
 
