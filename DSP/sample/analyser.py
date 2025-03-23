@@ -12,8 +12,7 @@ from sample.frontend.cfg import TCFGNode, Prog, TCFGEdgeKind, SimpProg
 from sample.frontend.isa import Addr
 from sample.frontend.loops import LoopHrchy
 from sample.ilp.ilp import ILPModel, LPSolve
-from sample.pipeline.abstract_interpretation import EPInPipeline, FPInPipeline, tcfg_node_to_eps_in_pipeline, eps_in_pipeline_to_fps_in_pipeline, \
-    fps_in_pipeline_to_cache_line
+from sample.pipeline.abstract_interpretation import EPInPipeline, FPInPipeline, tcfg_node_to_eps_in_pipeline, eps_in_pipeline_to_fps_in_pipeline, fps_in_pipeline_to_cache_line
 from sample.pipeline.simulator import do_pipeline_simulation_in_block
 from sample.pipeline.sploop import SPLoopType, sp_loop_scan
 from sample.pipeline.tracer import PipelineTracer
