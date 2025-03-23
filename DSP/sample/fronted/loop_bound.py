@@ -361,7 +361,7 @@ class CondOpNode(OpNode):
         return self
 
     def expand_info(self) -> dict[Var, Addr]:
-        """Return the address of each register in the leaves."""
+        """ Return the address of each register in the leaves. """
         leaves = self.leaves()
         d = {leaf.root: leaf.loc for leaf in leaves
              if isinstance(leaf.root, (Reg, MemRef))}
