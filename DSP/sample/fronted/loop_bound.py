@@ -379,7 +379,7 @@ def check_square_mat(m: Mat) -> bool:
 
 
 def transpose(m: Mat) -> Mat:
-    """Return the transposition of the given matrix"""
+    """ Return the transposition of the given matrix """
     if not m:
         return tuple()
     col_num = len(m[0])
