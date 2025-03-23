@@ -14,7 +14,7 @@ class InfPathException(Exception):
         return self.err_msg
 
 class SMTModel:
-    """representation of an SMT model"""
+    """ representation of an SMT model """
     def __init__(self) -> None:
         self._solver = z3.Solver()
         self.props: List[z3.Bool] = []
