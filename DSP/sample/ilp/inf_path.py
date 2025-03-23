@@ -102,11 +102,6 @@ class InfPath:
         code = bb.bb.code
         for i in range(len(code)):
             inst = code[i]
-            # # ignore the instructions in the same execute packet
-            # if inst.is_par:
-            #     while i < len(code) and code[i].is_par:
-            #         i += 1
-            # ignore useless inst
             if inst.is_cond_jump:
                 idx = path.index(bb)
                 outedge = [edge for edge in bb.out_edges if edge.dst == path[idx+1]][0]
