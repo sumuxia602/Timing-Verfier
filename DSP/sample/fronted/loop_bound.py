@@ -97,7 +97,6 @@ Var = Reg | MemRef
 
 
 class OpNode:
-
     def __init__(self, root: Operand,
                  prevs: tuple[Instruction, ...],
                  loc: Addr,
