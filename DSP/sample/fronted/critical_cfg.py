@@ -14,6 +14,7 @@ class CriticalCfg:
 
         all_new_in_edges: list[list[tuple[int, TCFGEdgeKind]]] = []
         all_new_out_edges: list[list[tuple[int, TCFGEdgeKind]]] = []
+        
         for node in ccfg:
             new_in_edges: list[tuple[int, TCFGEdgeKind]] = []
             for edge in node.in_edges:
