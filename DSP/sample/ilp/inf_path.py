@@ -62,7 +62,7 @@ def parse_operand(s: str) -> Operand:
 
 class InfPath:
     """ generate a series of SMTModel to check satisfiability of a wcet path """
-    """TODO: sliding window, associate first iteration and above && last iteration and behind"""
+    """ TODO: sliding window, associate first iteration and above && last iteration and behind """
 
     def __init__(self, loophrchy: LoopHrchy, lp_file: str) -> None:
         self._lp_file = lp_file
