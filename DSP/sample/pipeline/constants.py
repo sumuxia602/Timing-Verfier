@@ -336,6 +336,7 @@ class InstLookUpTable:
 
 
 class PipelineStage(Enum):
+    """ """
     Fetch = auto()
     Decode = auto()
     Execute = auto()
