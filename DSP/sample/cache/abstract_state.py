@@ -19,9 +19,7 @@ SetAbsState = Dict[Union[int, MemoryBlockWithScopeIdent], Union[int, ScopeAwareA
 class SetState:
     """
     Abstract Set State.
-
         支持三种Abstract Set State：
-
         * Must/May sim: 见论文 `Applying Compiler Techniques to Cache Behavior Prediction`
         * Persistent sim: 见论文 `On Predicting Data Cache Behavior for Real-Time Systems.`
         * Scope-aware sim: 见论文 `Scope-aware Data Cache Analysis for WCET Estimation`
