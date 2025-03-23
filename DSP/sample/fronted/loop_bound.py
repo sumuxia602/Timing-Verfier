@@ -236,7 +236,7 @@ class OpNode:
             return step
 
     def pprint(self, with_addr: bool = True) -> str:
-        """Print the process of register expansion."""
+        """ Print the process of register expansion. """
         steps = [self.convert(self.gen_step(i), with_addr=with_addr)
                  for i in range(self.level, self.depth)]
         if self.addr is not None and with_addr:
@@ -262,7 +262,7 @@ class OpNode:
         return rec(self)
 
     def leaves(self) -> tuple[OpNode, ...]:
-        """Return the leaves."""
+        """ Return the leaves. """
         if not self.children:
             return (OpNode(self.root, self.prevs, self.loc, tuple(),
                            self.level, self.op, self.addr),)
