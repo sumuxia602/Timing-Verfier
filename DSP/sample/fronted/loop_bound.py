@@ -204,7 +204,8 @@ class OpNode:
     def convert(self, tree_info: tuple[tuple[tuple[str, int], ...],
     tuple[tuple[Operand, Addr], ...]],
                 with_addr: bool = False) -> str:
-        """Generate the expression of the tree.
+        """
+        Generate the expression of the tree.
 
         If with_addr is true, the step will also add the expand information 
         at the current level.
