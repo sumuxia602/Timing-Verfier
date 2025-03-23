@@ -475,7 +475,7 @@ class RankFinder:
         return z3.simplify(d[0][0], arith_ineq_lhs=True)
 
     def translate_cond(self) -> z3.BoolRef | z3.ArithRef:
-        """Build the z3 expression for the loop condition."""
+        """ Build the z3 expression for the loop condition. """
         cond_expr = self.translate(self.cond)
         if self.cond.is_compare:
             if z3.is_le(cond_expr):
