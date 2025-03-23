@@ -112,7 +112,7 @@ class CacheConfig:
 
 
 def read_cache_config_from_json(f: str) -> Tuple[CacheConfig, CacheConfig]:
-    """"""
+    """ """
 
     with open(f, 'r') as fstream:
         cache_config_dict = json.load(fstream)
