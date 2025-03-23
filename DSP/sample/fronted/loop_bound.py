@@ -182,8 +182,9 @@ class OpNode:
 
     def gen_step(self, level: int) -> tuple[tuple[tuple[str, int], ...],
     tuple[tuple[Operand, Addr], ...]]:
-        """Generate the computation tree and 
-        expand information on a given level."""
+        """ 
+        Generate the computation tree and expand information on a given level.
+        """
         tree = []
         nodes = self.post_order()
         expand_addrs: list[tuple[Operand, Addr]] = []
