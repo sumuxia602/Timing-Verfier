@@ -78,7 +78,7 @@ class PipelineBehavior(Enum):
 
 
 def default_pipeline_behavior_translation(bh: Tuple) -> str:
-    
+    """ """
     e = bh[0]
 
     if e == PipelineBehavior.DO_PIPELINE_SIMULATION_START:
