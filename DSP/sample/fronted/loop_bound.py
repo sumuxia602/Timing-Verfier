@@ -3,8 +3,7 @@ from collections import deque
 import warnings
 from z3 import z3
 
-from sample.frontend.cfg import TCFGNode, \
-    Instruction, Addr
+from sample.frontend.cfg import TCFGNode, Instruction, Addr
 from sample.frontend.isa import gp_reg_names, Reg, \
     MemRef, Cond, Operand, ConstVal, HexVal, RegPair
 from sample.frontend.loops import Loop
