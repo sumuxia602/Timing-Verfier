@@ -416,8 +416,9 @@ class RankFinder:
     def convert_to_z3_expr(self, op: str,
                            operands: list[z3.ExprRef]
                            ) -> z3.ExprRef | z3.BoolRef:
-        """Return the corresponding z3 expression 
-        on the given opcode and operands."""
+        """
+        Return the corresponding z3 expression on the given opcode and operands.
+        """
         if op in ("MV", "LDW", "STW", "MVK", "LDHU", "STH", "LDH"):
             assert len(operands) == 1
             return operands[0]
