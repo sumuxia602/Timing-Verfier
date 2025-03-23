@@ -98,7 +98,7 @@ class InfPath:
         return
 
     def update_state(self, bb: TCFGNode, operand_state: Dict[Operand, z3.ExprRef], reg_index:Dict[Reg, int], path:List[TCFGNode]) -> None:
-        """update operand state by symbolic executing code of a tcdgnode."""
+        """ update operand state by symbolic executing code of a tcdgnode. """
         code = bb.bb.code
         for i in range(len(code)):
             inst = code[i]
