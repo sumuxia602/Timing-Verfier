@@ -1,6 +1,5 @@
 from enum import Enum, auto
 from typing import Tuple
-
 from sample.pipeline.constants import pipeline_stage_translation
 
 
