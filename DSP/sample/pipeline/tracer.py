@@ -1,7 +1,5 @@
 from typing import List, Tuple, Optional, Dict
-
 import yaml
-
 from sample.pipeline.behaviors import default_pipeline_behavior_translation, PipelineBehavior
 
 
