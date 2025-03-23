@@ -61,7 +61,7 @@ def parse_operand(s: str) -> Operand:
         raise NotImplementedError(s)
 
 class InfPath:
-    """generate a series of SMTModel to check satisfiability of a wcet path"""
+    """ generate a series of SMTModel to check satisfiability of a wcet path """
     """TODO: sliding window, associate first iteration and above && last iteration and behind"""
 
     def __init__(self, loophrchy: LoopHrchy, lp_file: str) -> None:
