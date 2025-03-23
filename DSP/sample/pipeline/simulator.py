@@ -339,7 +339,6 @@ def do_pipeline_simulation_in_block(block_id, fps: Sequence[FPInPipeline], fps_i
             behavior_append(pipeline_tracer, (PipelineBehavior.PIPELINE_STATUS, "\n".join([status_fetch_decode, status_execute])))
 
         """ Check if the execution of this block finishes. """
-
         fetch_free = fp_in_pg is None and fp_in_ps is None and fp_in_pw is None and fp_in_pr is None
         decode_free = fp_in_dp is None and ep_in_dc is None
         execute_free = all([o is None for o in ep_in_ei])
