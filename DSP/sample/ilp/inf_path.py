@@ -449,7 +449,7 @@ class InfPath:
             return new_cons
         
     def iterative_solve(self, verbal = False) -> int:
-        """TODO: random stop"""
+        """ TODO: random stop """
         it_count = 1
         index = 0
         start_time = time.time()
