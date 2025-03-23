@@ -10,7 +10,7 @@
 安装本项目使用的依赖：`python -m pip install -r requirements.txt`。
 
 ### 安装Graphviz
-（注意：为了显示控制流图，本项目使用了可视化软件<u>[Graphviz](https://graphviz.org/)</u>，请根据操作系统<u>[下载](https://graphviz.org/download/)</u>相应的版本并将其`bin`文件夹加入到系统环境变量中）
+（注意：为了显示控制流图，本项目使用了可视化软件<u>[Graphviz](https://graphviz.org/)</u>，请根据操作系统<u>[下载](https://graphviz.org/download/)</u>相应的版本并将其`bin`文件夹加入到系统环境变量中）。
 
 
 ### TI C6000系列编译器
