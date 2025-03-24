@@ -91,7 +91,6 @@ def do_pipeline_simulation_in_block(block_id, fps: Sequence[FPInPipeline], fps_i
         sp_looping = False
 
     while True:
-
         if next_stage_penalty != 0:
             penalty_start, penalty_finish = current_cycle + 1, current_cycle + next_stage_penalty
             behavior_append(pipeline_tracer, (PipelineBehavior.NEW_STALLED_PIPELINE_CYCLES, penalty_start, penalty_finish))
