@@ -1,5 +1,4 @@
 from typing import Union, Tuple, List, Sequence
-
 from sample.frontend.cfg import EPacket, TCFGNode, CFGNode
 from sample.frontend.isa import Instruction, Addr
 from sample.cache.cache_config import CacheConfig
