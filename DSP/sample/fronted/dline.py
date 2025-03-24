@@ -1,6 +1,5 @@
 import re
 from typing import Dict, Tuple
-
 from sample.frontend.isa import Addr
 
 
@@ -37,8 +36,7 @@ def parse_files_sect(files_sec: str) -> Dict[int, str]:
     return d
 
 
-def parse_line_num_prog(lnp_sec: str, file_map: Dict[int, str]) -> \
-        Dict[str, Dict[int, Tuple[Addr, ...]]]:
+def parse_line_num_prog(lnp_sec: str, file_map: Dict[int, str]) -> Dict[str, Dict[int, Tuple[Addr, ...]]]:
     """ Parsing the Line Number Program section. """
     lines = [s.strip() for s in lnp_sec.split("\n")]
     d: Dict[str, Dict[int, Tuple[Addr, ...]]] = dict()
