@@ -2,7 +2,6 @@ import re
 import warnings
 from enum import Enum, auto
 from typing import Optional, Sequence, Tuple, Union, List
-
 from sample.isa.isa_type import ISAType, InstType, ISASPLoopType, SPInstType
 from sample.isa.operand_syntax import OperandTyEnum, OperandObject, OperandAutomation, OperandHint, RegOperand, RegPairOperand, \
     RegQuadrupletOperand, IndAddrOperand, BTargetOperand, ImmOperand, FuncUnitOperand
