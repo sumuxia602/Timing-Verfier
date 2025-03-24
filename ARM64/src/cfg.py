@@ -172,7 +172,6 @@ _       """
         data = list()
         for proc in self.__procedures:
             begin_addr = proc.beg_addr.val()
-
             inst_len = len(proc.instruction)
             stop_addr = begin_addr + inst_len * 4
             begin_addr, stop_addr = hex(begin_addr), hex(stop_addr)
