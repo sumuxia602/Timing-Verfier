@@ -25,7 +25,6 @@ class LexicalAutomation:
 class ASMFileReader:
 
     __Strict = False
-
     __instruction_cpat = re.compile(LexicalAutomation.instruction_pat)
     __inline_data_cpat = re.compile(LexicalAutomation.inline_data_pat)
     __symbol_cpat = re.compile(LexicalAutomation.symbol_pat)
@@ -81,8 +80,7 @@ class ASMFileReader:
         return self.__stat_tokens
 
     def __build_section_table(self):
-        """"""
-
+        """ """
         entries = list()
         stat_idx, stat_sum = 0, len(self.__stat_tokens)
         while stat_idx < stat_sum:
@@ -111,8 +109,7 @@ class ASMFileReader:
         return self.__section_tabl
 
     def __build_symbol_table(self):
-        """"""
-
+        """ """
         entries = list()
         stat_idx, stat_sum = 0, len(self.__stat_tokens)
         while stat_idx < stat_sum:
