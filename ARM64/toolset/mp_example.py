@@ -34,7 +34,6 @@ class test_mp:
         手动开辟单个process的写法
         对比下面的pool的写法，所用的queue不是一个东西
         """
-        # 
         print('run_single_proc进程: {}'.format(os.getpid()))
         process = [MPProcess(target=self.test_mp_datatrans_proc, args=(1,mpQ,)),
                 MPProcess(target=self.test_mp_datatrans_proc, args=(2,mpQ,)), 
