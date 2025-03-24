@@ -73,12 +73,14 @@ class ISAType:
                 'SUB2', 'SUB4', 'SUBAB', 'SUBABS4', 'SUBAH', 'SUBAW', 'SUBC', 'SUBU', 'SWAP2', 'SWAP4', 'UNPKBU4', 'UNPKH2', 'UNPKHU2',
                 'UNPKHU4', 'UNPKLU4', 'XOR', 'ZERO'
             },
+        
         InstType.SINGLE_MULTI:
             {
                 'AVG2', 'AVGU4', 'BITC4', 'BITR', 'DAVG2', 'DAVGNR2', 'DAVGNRU4', 'DAVGU4', 'DEAL', 'DXPND2', 'DXPND4', 'MPY',
                 'MPYH', 'MPYHL', 'MPYHLU', 'MPYHSLU', 'MPYHSU', 'MPYHU', 'MPYHULS', 'MPYHUS', 'MPYLH', 'MPYLHU', 'MPYLSHU', 'MPYLUHS',
                 'MPYSU', 'MPYU', 'MPYUS', 'ROTL', 'SHFL', 'SMPY', 'SMPYH', 'SMPYHL', 'SMPYLH', 'SSHVL', 'SSHVR', 'XPND2', 'XPND4'
             },
+        
         InstType.MULTI_EXT:
             {
                 'CCMATMPY', 'CCMATMPYR1', 'CCMPY32R1', 'CMATMPY', 'CMATMPYR1', 'CMPY', 'CMPY32R1', 'CMPYR', 'CMPYR1', 'CMPYSP',
@@ -88,6 +90,7 @@ class ISAType:
                 'MPY32', 'MPY32SU', 'MPY32U', 'MPY32US', 'MPYHI', 'MPYHIR', 'MPYIH', 'MPYIHR', 'MPYIL', 'MPYILR', 'MPYLI', 'MPYLIR',
                 'MPYSU4', 'MPYU2', 'MPYU4', 'MPYUS4', 'QMPY32', 'QMPYSP', 'QSMPY32R1', 'SMPY2', 'SMPY32', 'XORMPY',
             },
+        
         InstType.BRANCH: {"B", "BDEC", "BPOS", "CALLP", "BNOP"},
         InstType.DP_CYCLE1: {"SPDP", "RCPDP", "ABSDP", "RSQRDP"},
         InstType.CYCLE3: {"FADDSP", "FSUBDP", "FADDDP", "DSPINTH", "DSUBSP", "FSUBSP", "DINTSPU", "DINTHSPU", "DADDSP", "DSPINT", "DINTHSP"},
@@ -116,7 +119,7 @@ class ISAType:
                 'DINT',  # Disable interrupts and save previous enable state.
                 'RINT'  # Restore previous enable state.
             },
-
+        
     }
 
     _inst_cycle = {
