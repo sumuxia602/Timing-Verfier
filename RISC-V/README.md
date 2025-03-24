@@ -5,13 +5,13 @@
 ## 安装和使用
 本项目需要使用Python 3.11或以上版本。
 
-###RISC-V编译工具链安装
-#linux环境下安装
+### RISC-V编译工具链安装
+# linux环境下安装
 sudo apt update
 sudo apt install build-essential gcc make perl dkms git  gdb-multiarch qemu-system-misc
 sudo apt install gcc-riscv64-linux-gnu
 
-#获取反汇编文件
+# 获取反汇编文件
 首先生成可执行文件（将example.c编译成可执行文件example）
 riscv64-linux-gnu-gcc -o example example.c
 将可执行文件反汇编
