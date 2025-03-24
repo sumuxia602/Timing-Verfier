@@ -1,7 +1,6 @@
 import warnings
 from enum import Enum, auto
 from typing import Optional, Hashable, List, Tuple
-
 from sample.frontend.cfg import Prog
 
 
