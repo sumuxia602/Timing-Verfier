@@ -146,7 +146,7 @@ def end2end_run(config: TestbenchConfig, logger: Logger):
     cache_analyser.persistent_analysis()  # 持久性分析
     cache_analyser.Categorize()           # 结果分类
 
-    # --------------------------------- 结果输出阶段 ---------------------------------
+    # ----------------------------------- 结果输出阶段 ------------------------------------
     analysis_output_path = os.path.join(output_path, 'cache-analysis')
     cache_analyser.output_chmc(analysis_output_path)  # 输出CHMC分析结果
     
