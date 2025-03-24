@@ -45,8 +45,7 @@ class CacheAnalyser:
 
         self.__loop_fixpoint: Dict[InnerProcLoop, Fixpoint] = defaultdict()
         for loop in self.__regular_loops:
-            self.__loop_fixpoint[loop] = Fixpoint(loop.proc, self.__debug_path, self.__debug, self.__cache_config,
-                                                  loop=loop)  # 初始化 proc 对应的 fixpoint
+            self.__loop_fixpoint[loop] = Fixpoint(loop.proc, self.__debug_path, self.__debug, self.__cache_config, loop=loop)  # 初始化 proc 对应的 fixpoint
 
         self.__proc_Per_states: Dict[Procedure, List[Dict[Hashable, FixpointState]]] = defaultdict(
             list)  # proc需要合并的state
