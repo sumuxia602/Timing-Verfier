@@ -13,7 +13,7 @@ class InstInPipeline:
         self.__operand_num = len(self.__backend_inst.operands)
         self.__ep_in = ep_in
 
-        """ Get the instruction type and execution cycle """
+        """ Get the instruction type and execution cycle. """
         for t, inst_set in InstLookUpTable.inst.items():
             if self.__backend_inst.name in inst_set:
                 self.__type, self.__execute_cycle = t, InstLookUpTable.cycle[t]
