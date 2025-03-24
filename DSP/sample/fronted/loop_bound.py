@@ -2,7 +2,6 @@ from __future__ import annotations
 from collections import deque
 import warnings
 from z3 import z3
-
 from sample.frontend.cfg import TCFGNode, Instruction, Addr
 from sample.frontend.isa import gp_reg_names, Reg, MemRef, Cond, Operand, ConstVal, HexVal, RegPair
 from sample.frontend.loops import Loop
@@ -522,8 +521,7 @@ class RankFinder:
         else:
             raise NotImplementedError(update)
 
-    def gen_lasw_row(self, e: z3.BoolRef) -> \
-            tuple[tuple[int, ...], tuple[int, ...], int]:
+    def gen_lasw_row(self, e: z3.BoolRef) -> tuple[tuple[int, ...], tuple[int, ...], int]:
         """ Given an inequality, return the corresponding row in AA' <= b. """
         var_num = len(self.names)
         assert z3.is_le(e)
