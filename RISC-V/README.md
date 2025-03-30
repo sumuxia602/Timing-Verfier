@@ -8,7 +8,9 @@
 ### RISC-V编译工具链安装
 # linux环境下安装
 sudo apt update
+
 sudo apt install build-essential gcc make perl dkms git  gdb-multiarch qemu-system-misc
+
 sudo apt install gcc-riscv64-linux-gnu
 
 # 获取反汇编文件
